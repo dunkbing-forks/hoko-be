@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  mysqldb:
+    image: mysql
+    restart: always
+    environment:
+      DATABASE_NAME: Hokolity
+      USERNAME: root
+      PASSWORD: HOKOLITY12345678
+      HOST: "%"
+      MYSQL_ROOT_PASSWORD: HOKOLITY12345678
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
