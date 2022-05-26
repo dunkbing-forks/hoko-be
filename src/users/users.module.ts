@@ -1,11 +1,11 @@
-import { AuthModule } from '../auth/auth.module';
-import { ContactInfo } from '../entities/contact.entity';
-import { Module, MiddlewareConsumer } from '@nestjs/common';
-import { UserController } from './users.controller';
-import { UserService } from '../services/users.service';
-import { LoggerMiddleware } from '../common/middleware/logger.middleware';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../entities/users.entity';
+import { AuthModule } from "../auth/auth.module";
+import { ContactInfo } from "../entities/contact.entity";
+import { Module, MiddlewareConsumer } from "@nestjs/common";
+import { UserController } from "./users.controller";
+import { UserService } from "../services/users.service";
+import { LoggerMiddleware } from "../common/middleware/logger.middleware";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "../entities/users.entity";
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, ContactInfo])],

@@ -1,8 +1,8 @@
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { Module } from '@nestjs/common';
-import { MailService } from '../services/mail.service';
-import { join } from 'path';
+import { MailerModule } from "@nestjs-modules/mailer";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { Module } from "@nestjs/common";
+import { MailService } from "../services/mail.service";
+import { join } from "path";
 
 @Module({
   imports: [
@@ -10,18 +10,18 @@ import { join } from 'path';
       // transport: 'smtps://user@example.com:topsecret@smtp.example.com',
       // or
       transport: {
-        host: 'smtp.ethereal.email',
+        host: "smtp.ethereal.email",
         port: 587,
         auth: {
-          user: 'liza.johnson37@ethereal.email',
-          pass: 'XjrWUXrA9ZXJsGHQnw',
+          user: "liza.johnson37@ethereal.email",
+          pass: "XjrWUXrA9ZXJsGHQnw",
         },
       },
       defaults: {
         from: '"No Reply" <noreply@example.com>',
       },
       template: {
-        dir: join(__dirname, 'templates'),
+        dir: join(__dirname, "templates"),
         adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
         options: {
           strict: true,

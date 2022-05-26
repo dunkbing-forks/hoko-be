@@ -1,11 +1,11 @@
-import { MailService } from './../services/mail.service';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../services/users.service';
-import * as bcrypt from 'bcrypt';
-import * as moment from 'moment';
-import { JwtService } from '@nestjs/jwt';
-import { config } from 'dotenv';
-import { Request } from 'express';
+import { MailService } from "./../services/mail.service";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { UserService } from "../services/users.service";
+import * as bcrypt from "bcrypt";
+import * as moment from "moment";
+import { JwtService } from "@nestjs/jwt";
+import { config } from "dotenv";
+import { Request } from "express";
 
 config();
 @Injectable()
@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-    private mailService: MailService,
+    private mailService: MailService
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -53,14 +53,14 @@ export class AuthService {
     if (!user) {
       // if not exist create new user with info of google account
       const data = await this.usersService.insertUserByLoginGoogle(
-        request.body,
+        request.body
       );
       user = await this.usersService.getUserByName(data.newUser.username);
       const res_email = await this.mailService.sendGoogleEmail(
         user,
-        data.randomPassword,
+        data.randomPassword
       );
-      console.log('loginGoogle-email', res_email);
+      console.log("loginGoogle-email", res_email);
     }
     // update refresh token
 
@@ -84,11 +84,11 @@ export class AuthService {
   }
 
   async validateRefreshJwtToken(username: string, refreshToken: string) {
-    const currentDate = new Date(moment().utc().format('YYYY/MM/DD HH:mm:ss'));
+    const currentDate = new Date(moment().utc().format("YYYY/MM/DD HH:mm:ss"));
     const user = await this.usersService.getUserWithRefreshToken(
       username,
       refreshToken,
-      currentDate,
+      currentDate
     );
     return user;
   }

@@ -1,16 +1,29 @@
 version: '3.4'
 
 services:
-  mysqldb:
-    image: mysql
-    restart: always
+  # mysqldb:
+  #   image: mysql
+  #   restart: always
+  #   environment:
+  #     HOST: "%"
+  #     DATABASE_NAME: Hokolity
+  #     USERNAME: root
+  #     PASSWORD: HOKOLITY12345678
+  #     MYSQL_ROOT_PASSWORD: HOKOLITY12345678
+  #   ports:
+  #     - 3306:3306
+  #   expose:
+  #     - 3306
+  hokodity:
+    # depends_on:
+    #   - mysqldb
+    image: backend
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
     environment:
-      DATABASE_NAME: Hokolity
-      USERNAME: root
-      PASSWORD: HOKOLITY12345678
-      HOST: "%"
-      MYSQL_ROOT_PASSWORD: HOKOLITY12345678
+      NODE_ENV: production
     ports:
-      - 3306:3306
+      - 3001:3001
     expose:
-      - 3306
+      - 3001

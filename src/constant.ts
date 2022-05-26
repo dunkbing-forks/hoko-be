@@ -10,4 +10,4 @@ export const ROUND_HASH_PASSWORD = {
 
 export const TOKEN_LIFE = 90;
 
-export const BASE_URL = 'https://ddsgq.xyz/api';
+export const BASE_URL = "https://ddsgq.xyz/api";

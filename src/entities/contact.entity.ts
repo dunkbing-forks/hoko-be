@@ -5,12 +5,12 @@ import {
   JoinColumn,
   BaseEntity,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from './users.entity';
+} from "typeorm";
+import { User } from "./users.entity";
 
-@Entity('contacts')
+@Entity("contacts")
 export class ContactInfo extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
   @Column()
@@ -37,7 +37,7 @@ export class ContactInfo extends BaseEntity {
   @Column()
   ownerId: number;
 
-  @OneToOne(() => User, (user) => user.contactInfo, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'ownerId', referencedColumnName: 'id' })
+  @OneToOne(() => User, (user) => user.contactInfo, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "ownerId", referencedColumnName: "id" })
   user: User;
 }

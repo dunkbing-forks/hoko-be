@@ -1,12 +1,13 @@
-import { ContactInfo } from '../entities/contact.entity';
-import { User } from '../entities/users.entity';
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
-import * as randomToken from 'rand-token';
-import * as moment from 'moment';
-import * as CONSTANTS from '../constant';
-import * as bcrypt from 'bcrypt';
+import { ContactInfo } from "../entities/contact.entity";
+import { User } from "../entities/users.entity";
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { MoreThan, MoreThanOrEqual, Repository } from "typeorm";
+import * as randomToken from "rand-token";
+import * as moment from "moment";
+import * as CONSTANTS from "../constant";
+import * as bcrypt from "bcrypt";
+const Web3 = require("web3");
 
 interface IUser {
   userName: string;
@@ -42,7 +43,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(ContactInfo)
-    private readonly contactRepository: Repository<ContactInfo>,
+    private readonly contactRepository: Repository<ContactInfo>
   ) {}
 
   async getUsers(): Promise<User[]> {
@@ -50,51 +51,54 @@ export class UserService {
   }
   async getAllUsers(): Promise<User[]> {
     return this.userRepository
-      .createQueryBuilder('users')
-      .where('role != 1')
-      .leftJoinAndSelect('users.contactInfo', 'contacts')
+      .createQueryBuilder("users")
+      .where("role != 1")
+      .leftJoinAndSelect("users.contactInfo", "contacts")
       .getMany();
   }
   async getUserByName(username: string): Promise<User> {
     const user = await this.userRepository
-      .createQueryBuilder('users')
-      .where('username = :username', { username: username })
-      .leftJoinAndSelect('users.contactInfo', 'contacts')
+      .createQueryBuilder("users")
+      .where("username = :username", { username: username })
+      .leftJoinAndSelect("users.contactInfo", "contacts")
       .getOne();
     return user;
   }
 
   async searchUserByName(username: string): Promise<User[]> {
     return this.userRepository
-      .createQueryBuilder('users')
-      .where('username like :name', { name: `%${username}%` })
-      .andWhere('role != 1')
-      .leftJoinAndSelect('users.contactInfo', 'contacts')
+      .createQueryBuilder("users")
+      .where("username like :name", { name: `%${username}%` })
+      .andWhere("role != 1")
+      .leftJoinAndSelect("users.contactInfo", "contacts")
       .getMany();
   }
 
   async insertUser(user: IUser): Promise<User> {
     try {
       if (await this.userRepository.findOne({ username: user.userName })) {
-        throw new Error('username already exists...!');
+        throw new Error("username already exists...!");
       }
 
+      const web3 = new Web3();
+
+      const response = web3.eth.accounts.create()
       const newUser = await this.userRepository
         .create({
           username: user.userName,
           password: await bcrypt.hash(
             user.password,
-            CONSTANTS.ROUND_HASH_PASSWORD.ROUND,
+            CONSTANTS.ROUND_HASH_PASSWORD.ROUND
           ),
           role: CONSTANTS.ROLE.USER,
           active: user.active,
           refreshToken: randomToken.generate(16),
-          walletAddress: "",
-          privateKey: "",
+          walletAddress: response.address,
+          privateKey: response.privateKey,
           refreshTokenExp: moment()
             .utc()
-            .add(30, 'minute')
-            .format('YYYY/MM/DD HH:mm:ss'),
+            .add(30, "minute")
+            .format("YYYY/MM/DD HH:mm:ss"),
         })
         .save();
 
@@ -126,26 +130,26 @@ export class UserService {
     if (isVerifyPassword) {
       user.password = await bcrypt.hash(
         data.newPassword,
-        CONSTANTS.ROUND_HASH_PASSWORD.ROUND,
+        CONSTANTS.ROUND_HASH_PASSWORD.ROUND
       );
       await user.save();
 
       return {
         status: HttpStatus.OK,
-        message: 'Change Password Successful',
+        message: "Change Password Successful",
       };
     }
 
     return {
       status: HttpStatus.UNPROCESSABLE_ENTITY,
-      message: 'Password Was Duplicate Or Wrong',
+      message: "Password Was Duplicate Or Wrong",
     };
   }
 
   async insertUserByLoginGoogle(user: GoogleUser): Promise<any> {
     try {
       if (await this.contactRepository.findOne({ email: user.email })) {
-        throw new Error('email already exists...!');
+        throw new Error("email already exists...!");
       }
       const randomPassword = Math.random().toString(36).slice(-8);
       const newUser = await this.userRepository
@@ -153,14 +157,14 @@ export class UserService {
           username: user.email,
           password: await bcrypt.hash(
             randomPassword,
-            CONSTANTS.ROUND_HASH_PASSWORD.ROUND,
+            CONSTANTS.ROUND_HASH_PASSWORD.ROUND
           ),
           role: CONSTANTS.ROLE.USER,
           refreshToken: randomToken.generate(16),
           refreshTokenExp: moment()
             .utc()
-            .add(30, 'minute')
-            .format('YYYY/MM/DD HH:mm:ss'),
+            .add(30, "minute")
+            .format("YYYY/MM/DD HH:mm:ss"),
         })
         .save();
 
@@ -187,8 +191,8 @@ export class UserService {
     user.refreshTokenExp = new Date(
       moment()
         .utc()
-        .add(CONSTANTS.TOKEN_LIFE, 'minute')
-        .format('YYYY/MM/DD HH:mm:ss'),
+        .add(CONSTANTS.TOKEN_LIFE, "minute")
+        .format("YYYY/MM/DD HH:mm:ss")
     );
     await user.save();
     return user.refreshToken;
@@ -197,7 +201,7 @@ export class UserService {
   async getUserWithRefreshToken(
     username: string,
     refreshToken: string,
-    currentDate: Date,
+    currentDate: Date
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       username: username,
@@ -221,7 +225,7 @@ export class UserService {
     contact.firstName = req.firstName;
     contact.lastName = req.lastName;
     contact.phone = req.phone;
-    contact.dateOfBirth = new Date(moment(req.dob, ['DD/MM/YYYY']).format());
+    contact.dateOfBirth = new Date(moment(req.dob, ["DD/MM/YYYY"]).format());
     contact.address = req.address;
     if (req.avatar) {
       contact.avatar = req.avatar;
@@ -244,9 +248,9 @@ export class UserService {
 
   async getUserByEmail(email: string) {
     const user = await this.userRepository
-      .createQueryBuilder('users')
-      .leftJoinAndSelect('users.contactInfo', 'contacts')
-      .where('contacts.email = :email', { email: email })
+      .createQueryBuilder("users")
+      .leftJoinAndSelect("users.contactInfo", "contacts")
+      .where("contacts.email = :email", { email: email })
       .getOne();
 
     return user;
@@ -257,7 +261,7 @@ export class UserService {
     const randomPassword = Math.random().toString(36).slice(-8);
     user.password = await bcrypt.hash(
       randomPassword,
-      CONSTANTS.ROUND_HASH_PASSWORD.ROUND,
+      CONSTANTS.ROUND_HASH_PASSWORD.ROUND
     );
     await user.save();
 

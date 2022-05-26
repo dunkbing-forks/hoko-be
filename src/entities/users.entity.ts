@@ -5,11 +5,11 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   BaseEntity,
-} from 'typeorm';
-import { ContactInfo } from './contact.entity';
-@Entity('users')
+} from "typeorm";
+import { ContactInfo } from "./contact.entity";
+@Entity("users")
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
   @Column()
@@ -24,20 +24,20 @@ export class User extends BaseEntity {
   @Column()
   active: boolean;
 
-  @Column({ nullable: true, name: 'refreshtoken' })
+  @Column({ nullable: true, name: "refreshtoken" })
   refreshToken: string;
 
   @Column({ nullable: false, unique: true })
   walletAddress: string;
 
   @Column({ nullable: false, unique: true })
-  privateKey: string;
+  privateKey?: string;
 
-  @Column({ type: 'datetime', nullable: true, name: 'refreshtokenexp' })
+  @Column({ type: "datetime", nullable: true, name: "refreshtokenexp" })
   refreshTokenExp: Date;
 
   @OneToOne(() => ContactInfo, (contactInfo) => contactInfo.user, {
-    onDelete: 'CASCADE',
+    onDelete: "CASCADE",
   })
   contactInfo: ContactInfo;
 }

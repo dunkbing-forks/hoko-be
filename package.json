@@ -30,11 +30,13 @@
     "@nestjs/platform-express": "^7.6.18",
     "@nestjs/typeorm": "^7.1.5",
     "bcrypt": "^5.0.1",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.6.0",
     "express-session": "^1.17.2",
     "fast-csv": "^4.3.6",
+    "ganache-cli": "^6.12.2",
     "googleapis": "^82.0.0",
     "handlebars": "^4.7.7",
     "moment": "^2.29.1",
@@ -49,9 +51,11 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
+    "truffle-contract": "^4.0.31",
     "typeorm": "^0.2.34",
     "typeorm-encrypted": "^0.5.6",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "web3": "^1.7.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
