@@ -14,7 +14,7 @@ export class UpdateInformationDto {
   readonly email: string;
 
   @IsString()
-  readonly phone?: string;
+  readonly phone: string;
 
   @IsString()
   readonly address?: string;

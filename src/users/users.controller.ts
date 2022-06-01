@@ -1,3 +1,4 @@
+import { Wallets } from "./../entities/wallet.entity";
 import {
   Controller,
   Get,
@@ -8,6 +9,7 @@ import {
   Res,
   Param,
   HttpStatus,
+  HttpException,
 } from "@nestjs/common";
 import { User } from "../entities/users.entity";
 import { UserService } from "../services/users.service";
@@ -39,6 +41,7 @@ type ResponseUser = {
     avatar: string;
     ownerId: number;
   };
+  wallets: any[];
 };
 
 @Controller("users")
@@ -48,37 +51,8 @@ export class UserController {
   @Get("/")
   async getAllUsers(): Promise<ResponseUser[]> {
     const data = await this.userService.getAllUsers();
-    return data.map((user: User): ResponseUser => {
-      return {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        active: user.active,
-        refreshToken: user.refreshToken,
-        refreshTokenExp: user.refreshTokenExp,
-        contactInfo: {
-          id: user.contactInfo.id,
-          firstName: user.contactInfo.firstName,
-          lastName: user.contactInfo.lastName,
-          email: user.contactInfo.email,
-          phone: user.contactInfo.phone,
-          dateOfBirth: user.contactInfo.dateOfBirth,
-          address: user.contactInfo.address,
-          avatar: user.contactInfo.avatar,
-          ownerId: user.contactInfo.ownerId,
-        },
-      };
-    });
-  }
-
-  @Get("/:search/")
-  async searchUserByName(
-    @Res() res: Response,
-    @Param("search") username: string
-  ): Promise<any> {
-    try {
-      const data = await this.userService.searchUserByName(username);
-      const response = data.map((user: User): ResponseUser => {
+    return data.map(
+      (user: User): ResponseUser => {
         return {
           id: user.id,
           username: user.username,
@@ -97,73 +71,122 @@ export class UserController {
             avatar: user.contactInfo.avatar,
             ownerId: user.contactInfo.ownerId,
           },
+          wallets: user.wallets.map((wallet: Wallets) => {
+            return {
+              id: wallet.id,
+              walletAddress: wallet.walletAddress,
+              ownerId: wallet.ownerId,
+            };
+          }),
         };
-      });
+      }
+    );
+  }
+
+  @Get("/:search/")
+  async searchUserByName(
+    @Res() res: Response,
+    @Param("search") username: string
+  ): Promise<any> {
+    try {
+      const data = await this.userService.searchUserByName(username);
+      const response = data.map(
+        (user: User): ResponseUser => {
+          return {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+            active: user.active,
+            refreshToken: user.refreshToken,
+            refreshTokenExp: user.refreshTokenExp,
+            contactInfo: {
+              id: user.contactInfo.id,
+              firstName: user.contactInfo.firstName,
+              lastName: user.contactInfo.lastName,
+              email: user.contactInfo.email,
+              phone: user.contactInfo.phone,
+              dateOfBirth: user.contactInfo.dateOfBirth,
+              address: user.contactInfo.address,
+              avatar: user.contactInfo.avatar,
+              ownerId: user.contactInfo.ownerId,
+            },
+            wallets: user.wallets.map((wallet: Wallets) => {
+              return {
+                id: wallet.id,
+                walletAddress: wallet.walletAddress,
+                ownerId: wallet.ownerId,
+              };
+            }),
+          };
+        }
+      );
       return res.status(HttpStatus.OK).send(response);
     } catch (error) {}
   }
 
   @Get("/:id/")
-  async getUserById(@Param("id") id: number, @Res() res: Response): Promise<any> {
-    const user = await this.userService.getUserById(id)
+  async getUserById(
+    @Param("id") id: number,
+    @Res() res: Response
+  ): Promise<any> {
+    console.log("ok");
+    const user = await this.userService.getUserById(id);
     const response = {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        active: user.active,
-        refreshToken: user.refreshToken,
-        refreshTokenExp: user.refreshTokenExp,
-        contactInfo: {
-          id: user.contactInfo.id,
-          firstName: user.contactInfo.firstName,
-          lastName: user.contactInfo.lastName,
-          email: user.contactInfo.email,
-          phone: user.contactInfo.phone,
-          dateOfBirth: user.contactInfo.dateOfBirth,
-          address: user.contactInfo.address,
-          avatar: user.contactInfo.avatar,
-          ownerId: user.contactInfo.ownerId,
-        },
-      };
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      active: user.active,
+      refreshToken: user.refreshToken,
+      refreshTokenExp: user.refreshTokenExp,
+      contactInfo: {
+        id: user.contactInfo.id,
+        firstName: user.contactInfo.firstName,
+        lastName: user.contactInfo.lastName,
+        email: user.contactInfo.email,
+        phone: user.contactInfo.phone,
+        dateOfBirth: user.contactInfo.dateOfBirth,
+        address: user.contactInfo.address,
+        avatar: user.contactInfo.avatar,
+        ownerId: user.contactInfo.ownerId,
+      },
+      wallets: user.wallets.map((wallet: Wallets) => {
+        return {
+          id: wallet.id,
+          walletAddress: wallet.walletAddress,
+          ownerId: wallet.ownerId,
+        };
+      }),
+    };
     return res.status(HttpStatus.OK).send(response);
   }
 
   @Post("/create")
-  async createUser(@Body() user: CreateUserDto, @Res() res: Response): Promise<any> {
+  async createUser(
+    @Body() user: CreateUserDto,
+    @Res() res: Response
+  ): Promise<any> {
     try {
       const newUser = await this.userService.insertUser(user);
-      const response = {
-        id: newUser.id,
-        username: newUser.username,
-        role: newUser.role,
-        active: newUser.active,
-        refreshToken: newUser.refreshToken,
-        refreshTokenExp: newUser.refreshTokenExp,
-        contactInfo: {
-          id: newUser.contactInfo.id,
-          firstName: newUser.contactInfo.firstName,
-          lastName: newUser.contactInfo.lastName,
-          email: newUser.contactInfo.email,
-          phone: newUser.contactInfo.phone,
-          dateOfBirth: newUser.contactInfo.dateOfBirth,
-          address: newUser.contactInfo.address,
-          avatar: newUser.contactInfo.avatar,
-          ownerId: newUser.contactInfo.ownerId,
-        },
-      };
-      return res.status(HttpStatus.OK).send(response);
+      return res.status(HttpStatus.OK).send(newUser);
     } catch (error) {
-      return {
-        message: "create user fail...!",
-      };
+      return res.status(HttpStatus.BAD_REQUEST).send(error.message);
     }
   }
 
   @Post("/get-information")
   async getInformation(@Body() body: GetInformationDto): Promise<Object> {
     try {
-      const contact = await this.userService.getUserByName(body.username);
-      return contact.contactInfo;
+      const user = await this.userService.getUserByName(body.username);
+      return {
+        ...user.contactInfo,
+        wallets: user.wallets.map((wallet: Wallets) => {
+          return {
+            id: wallet.id,
+            walletAddress: wallet.walletAddress,
+            ownerId: wallet.ownerId,
+          };
+        }),
+      };
     } catch (error) {
       return {
         message: "get information fail...!",
@@ -176,8 +199,7 @@ export class UserController {
     @Body() request: UpdateInformationDto
   ): Promise<Object> {
     try {
-      const contact = await this.userService.updateUserInformation(request);
-      return contact;
+      return await this.userService.updateUserInformation(request);
     } catch (error) {
       return {
         message: "update fail...!",

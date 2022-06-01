@@ -7,6 +7,7 @@ import {
   BaseEntity,
 } from "typeorm";
 import { ContactInfo } from "./contact.entity";
+import { Wallets } from "./wallet.entity";
 @Entity("users")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -27,17 +28,16 @@ export class User extends BaseEntity {
   @Column({ nullable: true, name: "refreshtoken" })
   refreshToken: string;
 
-  @Column({ nullable: false, unique: true })
-  walletAddress: string;
-
-  @Column({ nullable: false, unique: true })
-  privateKey?: string;
-
   @Column({ type: "datetime", nullable: true, name: "refreshtokenexp" })
   refreshTokenExp: Date;
 
   @OneToOne(() => ContactInfo, (contactInfo) => contactInfo.user, {
-    onDelete: "CASCADE",
+    cascade: true,
   })
   contactInfo: ContactInfo;
+
+  @OneToMany(() => Wallets, (wallet) => wallet.user, {
+    cascade: true,
+  })
+  wallets: Wallets[];
 }

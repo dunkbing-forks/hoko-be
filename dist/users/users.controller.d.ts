@@ -24,6 +24,7 @@ declare type ResponseUser = {
         avatar: string;
         ownerId: number;
     };
+    wallets: any[];
 };
 export declare class UserController {
     private readonly userService;

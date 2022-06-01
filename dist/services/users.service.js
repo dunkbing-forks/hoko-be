@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
+const wallet_entity_1 = require("./../entities/wallet.entity");
 const contact_entity_1 = require("../entities/contact.entity");
 const users_entity_1 = require("../entities/users.entity");
 const common_1 = require("@nestjs/common");
@@ -24,9 +25,10 @@ const CONSTANTS = require("../constant");
 const bcrypt = require("bcrypt");
 const Web3 = require("web3");
 let UserService = class UserService {
-    constructor(userRepository, contactRepository) {
+    constructor(userRepository, contactRepository, walletsRepository) {
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
+        this.walletsRepository = walletsRepository;
     }
     async getUsers() {
         return this.userRepository.find();
@@ -36,6 +38,7 @@ let UserService = class UserService {
             .createQueryBuilder("users")
             .where("role != 1")
             .leftJoinAndSelect("users.contactInfo", "contacts")
+            .leftJoinAndSelect("users.wallets", "wallets")
             .getMany();
     }
     async getUserByName(username) {
@@ -43,7 +46,8 @@ let UserService = class UserService {
             .createQueryBuilder("users")
             .where("username = :username", { username: username })
             .leftJoinAndSelect("users.contactInfo", "contacts")
-            .getOne();
+            .leftJoinAndSelect("users.wallets", "wallets")
+            .getOneOrFail();
         return user;
     }
     async searchUserByName(username) {
@@ -55,27 +59,24 @@ let UserService = class UserService {
             .getMany();
     }
     async insertUser(user) {
-        try {
-            if (await this.userRepository.findOne({ username: user.userName })) {
-                throw new Error("username already exists...!");
-            }
-            const web3 = new Web3();
-            const response = web3.eth.accounts.create();
-            const newUser = await this.userRepository
-                .create({
-                username: user.userName,
-                password: await bcrypt.hash(user.password, CONSTANTS.ROUND_HASH_PASSWORD.ROUND),
-                role: CONSTANTS.ROLE.USER,
-                active: user.active,
-                refreshToken: randomToken.generate(16),
-                walletAddress: response.address,
-                privateKey: response.privateKey,
-                refreshTokenExp: moment()
-                    .utc()
-                    .add(30, "minute")
-                    .format("YYYY/MM/DD HH:mm:ss"),
-            })
-                .save();
+        if (await this.userRepository.findOne({ username: user.userName })) {
+            throw new Error("username already exists...!");
+        }
+        const web3 = new Web3();
+        const newUser = await this.userRepository
+            .create({
+            username: user.userName,
+            password: await bcrypt.hash(user.password, CONSTANTS.ROUND_HASH_PASSWORD.ROUND),
+            role: CONSTANTS.ROLE.USER,
+            active: user.active,
+            refreshToken: randomToken.generate(16),
+            refreshTokenExp: moment()
+                .utc()
+                .add(30, "minute")
+                .format("YYYY/MM/DD HH:mm:ss"),
+        })
+            .save();
+        if (newUser) {
             await this.contactRepository
                 .create({
                 firstName: user.firstName,
@@ -87,12 +88,16 @@ let UserService = class UserService {
                 user: newUser,
             })
                 .save();
-            return newUser;
+            const response = web3.eth.accounts.create();
+            await this.walletsRepository
+                .create({
+                walletAddress: response.address,
+                walletPrivateKey: response.privateKey,
+                user: newUser,
+            })
+                .save();
         }
-        catch (error) {
-            common_1.Logger.error(error);
-            return error;
-        }
+        return newUser;
     }
     async changePassword(data) {
         const user = await this.getUserById(data.userId);
@@ -220,7 +225,9 @@ UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(users_entity_1.User)),
     __param(1, (0, typeorm_1.InjectRepository)(contact_entity_1.ContactInfo)),
+    __param(2, (0, typeorm_1.InjectRepository)(wallet_entity_1.Wallets)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], UserService);
 exports.UserService = UserService;

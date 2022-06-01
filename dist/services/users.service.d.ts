@@ -1,3 +1,4 @@
+import { Wallets } from "./../entities/wallet.entity";
 import { ContactInfo } from "../entities/contact.entity";
 import { User } from "../entities/users.entity";
 import { Repository } from "typeorm";
@@ -29,7 +30,8 @@ interface ChangePassword {
 export declare class UserService {
     private readonly userRepository;
     private readonly contactRepository;
-    constructor(userRepository: Repository<User>, contactRepository: Repository<ContactInfo>);
+    private readonly walletsRepository;
+    constructor(userRepository: Repository<User>, contactRepository: Repository<ContactInfo>, walletsRepository: Repository<Wallets>);
     getUsers(): Promise<User[]>;
     getAllUsers(): Promise<User[]>;
     getUserByName(username: string): Promise<User>;

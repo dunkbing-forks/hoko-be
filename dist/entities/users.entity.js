@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const contact_entity_1 = require("./contact.entity");
+const wallet_entity_1 = require("./wallet.entity");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -39,23 +40,21 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "refreshToken", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: false, unique: true }),
-    __metadata("design:type", String)
-], User.prototype, "walletAddress", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: false, unique: true }),
-    __metadata("design:type", String)
-], User.prototype, "privateKey", void 0);
-__decorate([
     (0, typeorm_1.Column)({ type: "datetime", nullable: true, name: "refreshtokenexp" }),
     __metadata("design:type", Date)
 ], User.prototype, "refreshTokenExp", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => contact_entity_1.ContactInfo, (contactInfo) => contactInfo.user, {
-        onDelete: "CASCADE",
+        cascade: true,
     }),
     __metadata("design:type", contact_entity_1.ContactInfo)
 ], User.prototype, "contactInfo", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => wallet_entity_1.Wallets, (wallet) => wallet.user, {
+        cascade: true,
+    }),
+    __metadata("design:type", Array)
+], User.prototype, "wallets", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)("users")
 ], User);
