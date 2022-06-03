@@ -12,7 +12,7 @@ import * as bcrypt from "bcrypt";
 const Web3 = require("web3");
 
 interface IUser {
-	userName: string;
+	username: string;
 	password: string;
 	role?: number;
 	active?: boolean;
@@ -84,7 +84,7 @@ export class UserService {
 	}
 
 	async insertUser(user: IUser): Promise<User> {
-		if (await this.userRepository.findOne({username: user.userName})) {
+		if (await this.userRepository.findOne({username: user.username})) {
 			throw new Error("username already exists...!");
 		}
 
@@ -92,7 +92,7 @@ export class UserService {
 
 		const newUser = await this.userRepository
 			.create({
-				username: user.userName,
+				username: user.username,
 				password: await bcrypt.hash(
 					user.password,
 					CONSTANTS.ROUND_HASH_PASSWORD.ROUND
