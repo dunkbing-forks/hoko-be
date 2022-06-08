@@ -21,11 +21,16 @@ const common_1 = require("@nestjs/common");
 const local_auth_guard_1 = require("./auth/local-auth.guard");
 const refresh_token_guard_1 = require("./auth/refresh-token.guard");
 const CONSTANT = require("./constant");
+const posts_service_1 = require("./posts/posts.service");
 let AppController = class AppController {
-    constructor(authService, mailService, userService) {
+    constructor(authService, mailService, userService, postsService) {
         this.authService = authService;
         this.mailService = mailService;
         this.userService = userService;
+        this.postsService = postsService;
+    }
+    async getPosts() {
+        return await this.postsService.getPosts();
     }
     async forgotPassword(res, query) {
         try {
@@ -140,6 +145,12 @@ let AppController = class AppController {
     }
 };
 __decorate([
+    (0, common_1.Get)('/posts/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getPosts", null);
+__decorate([
     (0, common_1.Get)("/forgot-password"),
     __param(0, (0, common_1.Res)()),
     __param(1, (0, common_1.Query)()),
@@ -193,7 +204,8 @@ AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         mail_service_1.MailService,
-        users_service_1.UserService])
+        users_service_1.UserService,
+        posts_service_1.PostsService])
 ], AppController);
 exports.AppController = AppController;
 //# sourceMappingURL=app.controller.js.map

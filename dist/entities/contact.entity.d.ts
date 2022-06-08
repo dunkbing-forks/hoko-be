@@ -10,5 +10,7 @@ export declare class ContactInfo extends BaseEntity {
     address?: string;
     avatar?: string;
     ownerId: number;
+    createdAt: Date;
+    updatedAt: Date;
     user: User;
 }

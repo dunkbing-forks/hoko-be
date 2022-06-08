@@ -8,12 +8,13 @@ import { AuthModule } from "./auth/auth.module";
 import { config } from "dotenv";
 import { MailModule } from "./mail/mail.module";
 import { AutoEncryptSubscriber } from "typeorm-encrypted";
+import { PostsController } from './posts/posts.controller';
+import { PostsModule } from './posts/posts.module';
 
 config();
 
 @Module({
   imports: [
-    UserModule,
     TypeOrmModule.forRoot({
       type: "mysql",
       host: "localhost",
@@ -32,6 +33,8 @@ config();
     }),
     AuthModule,
     MailModule,
+    PostsModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

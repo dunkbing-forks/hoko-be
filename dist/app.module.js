@@ -17,13 +17,13 @@ const auth_module_1 = require("./auth/auth.module");
 const dotenv_1 = require("dotenv");
 const mail_module_1 = require("./mail/mail.module");
 const typeorm_encrypted_1 = require("typeorm-encrypted");
+const posts_module_1 = require("./posts/posts.module");
 (0, dotenv_1.config)();
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            users_module_1.UserModule,
             typeorm_1.TypeOrmModule.forRoot({
                 type: "mysql",
                 host: "localhost",
@@ -42,6 +42,8 @@ AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
             mail_module_1.MailModule,
+            posts_module_1.PostsModule,
+            users_module_1.UserModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

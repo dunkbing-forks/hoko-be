@@ -4,7 +4,7 @@ import {
   OneToOne,
   JoinColumn,
   BaseEntity,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn,
 } from "typeorm";
 import { User } from "./users.entity";
 
@@ -36,6 +36,12 @@ export class ContactInfo extends BaseEntity {
 
   @Column()
   ownerId: number;
+
+  @CreateDateColumn({name: 'created_at'})
+  createdAt: Date;
+
+  @UpdateDateColumn({name: 'updated_at'})
+  updatedAt: Date;
 
   @OneToOne(() => User, (user) => user.contactInfo, { onDelete: "CASCADE" })
   @JoinColumn({ name: "ownerId", referencedColumnName: "id" })

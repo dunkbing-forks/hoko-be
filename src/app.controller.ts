@@ -16,6 +16,7 @@ import { LocalAuthGuard } from "./auth/local-auth.guard";
 import { Response, Request } from "express";
 import { RefreshTokenGuard } from "./auth/refresh-token.guard";
 import * as CONSTANT from "./constant";
+import {PostsService} from "./posts/posts.service";
 
 interface IEmail {
   email: string;
@@ -25,8 +26,14 @@ export class AppController {
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly postsService: PostsService
   ) {}
+
+  @Get('/posts/')
+  async getPosts() {
+    return await this.postsService.getPosts();
+  }
 
   @Get("/forgot-password")
   async forgotPassword(@Res() res: Response, @Query() query: IEmail) {

@@ -18,7 +18,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migrate:create": "ts-node ./node_modules/typeorm/cli.js migration:create -n",
+    "migrate:up": "ts-node ./node_modules/typeorm/cli.js migration:run",
+    "migrate:down": "ts-node ./node_modules/typeorm/cli.js migration:revert"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.6.0",
@@ -39,7 +42,7 @@
     "ganache-cli": "^6.12.2",
     "googleapis": "^82.0.0",
     "handlebars": "^4.7.7",
-    "moment": "^2.29.1",
+    "moment": "^2.29.3",
     "mysql2": "^2.2.5",
     "node-mocks-http": "^1.10.1",
     "passport": "^0.4.1",

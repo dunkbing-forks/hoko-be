@@ -51,6 +51,14 @@ __decorate([
     __metadata("design:type", Number)
 ], ContactInfo.prototype, "ownerId", void 0);
 __decorate([
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
+    __metadata("design:type", Date)
+], ContactInfo.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
+    __metadata("design:type", Date)
+], ContactInfo.prototype, "updatedAt", void 0);
+__decorate([
     (0, typeorm_1.OneToOne)(() => users_entity_1.User, (user) => user.contactInfo, { onDelete: "CASCADE" }),
     (0, typeorm_1.JoinColumn)({ name: "ownerId", referencedColumnName: "id" }),
     __metadata("design:type", users_entity_1.User)

@@ -13,6 +13,7 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const contact_entity_1 = require("./contact.entity");
 const wallet_entity_1 = require("./wallet.entity");
+const post_entity_1 = require("./post.entity");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -44,6 +45,14 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "refreshTokenExp", void 0);
 __decorate([
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
+    __metadata("design:type", Date)
+], User.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
+    __metadata("design:type", Date)
+], User.prototype, "updatedAt", void 0);
+__decorate([
     (0, typeorm_1.OneToOne)(() => contact_entity_1.ContactInfo, (contactInfo) => contactInfo.user, {
         cascade: true,
     }),
@@ -55,6 +64,12 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], User.prototype, "wallets", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => post_entity_1.Posts, (post) => post.user, {
+        cascade: true,
+    }),
+    __metadata("design:type", Array)
+], User.prototype, "post", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)("users")
 ], User);
