@@ -17,7 +17,7 @@ config();
   imports: [
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: "localhost",
+      host: process.env.HOST,
       port: Number(process.env.DB_PORT),
       database: process.env.DATABASE_NAME,
       synchronize: false,
