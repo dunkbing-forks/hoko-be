@@ -2,7 +2,7 @@ import { IsString, IsNumber, IsBoolean } from "class-validator";
 
 export class CreateUserDto {
   @IsString()
-  readonly userName: string;
+  readonly username: string;
 
   @IsString()
   readonly password: string;
