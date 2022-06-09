@@ -163,12 +163,8 @@ export class UserController {
     @Body() user: CreateUserDto,
     @Res() res: Response
   ): Promise<any> {
-    try {
-      const newUser = await this.userService.insertUser(user);
-      return res.status(HttpStatus.OK).send(newUser);
-    } catch (error) {
-      return res.status(HttpStatus.BAD_REQUEST).send(error.message);
-    }
+    const newUser = await this.userService.insertUser(user);
+    return res.status(HttpStatus.OK).send(newUser);
   }
 
   @Post("/get-information")

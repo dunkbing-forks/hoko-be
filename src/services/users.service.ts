@@ -8,6 +8,7 @@ import * as randomToken from "rand-token";
 import * as moment from "moment";
 import * as CONSTANTS from "../constant";
 import * as bcrypt from "bcrypt";
+import { BaseService } from "./base.service";
 
 const Web3 = require("web3");
 
@@ -40,7 +41,7 @@ interface ChangePassword {
 }
 
 @Injectable()
-export class UserService {
+export class UserService extends BaseService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -48,7 +49,9 @@ export class UserService {
     private readonly contactRepository: Repository<ContactInfo>,
     @InjectRepository(Wallets)
     private readonly walletsRepository: Repository<Wallets>
-  ) {}
+  ) {
+    super();
+  }
 
   async getUsers(): Promise<User[]> {
     return this.userRepository.find();
@@ -83,14 +86,11 @@ export class UserService {
   }
 
   async insertUser(user: IUser): Promise<User> {
-    if (await this.userRepository.findOne({ username: user.username })) {
-      throw new Error("username already exists...!");
-    }
+    try {
+      await this.startTransaction();
+      const web3 = new Web3();
 
-    const web3 = new Web3();
-
-    const newUser = await this.userRepository
-      .create({
+      const newUser = await this.queryRunner.manager.save(User, {
         username: user.username,
         password: await bcrypt.hash(
           user.password,
@@ -103,11 +103,9 @@ export class UserService {
           .utc()
           .add(30, "minute")
           .format("YYYY/MM/DD HH:mm:ss"),
-      })
-      .save();
-    if (newUser) {
-      await this.contactRepository
-        .create({
+      });
+      if (newUser) {
+        await this.queryRunner.manager.save(ContactInfo, {
           firstName: user.firstName,
           lastName: user.lastName,
           address: user.address,
@@ -115,20 +113,24 @@ export class UserService {
           email: user.email,
           phone: user.phone,
           user: newUser,
-        })
-        .save();
+        });
 
-      const response = web3.eth.accounts.create();
-      await this.walletsRepository
-        .create({
+        const response = web3.eth.accounts.create();
+        await this.queryRunner.manager.save(Wallets, {
           walletAddress: response.address,
           walletPrivateKey: response.privateKey,
           user: newUser,
-        })
-        .save();
-    }
+        });
+      }
+      await this.commitTransaction();
 
-    return newUser;
+      return newUser;
+    } catch (error) {
+      await this.rollbackTransaction();
+      throw error;
+    } finally {
+      await this.release();
+    }
   }
 
   async changePassword(data: ChangePassword): Promise<any> {
