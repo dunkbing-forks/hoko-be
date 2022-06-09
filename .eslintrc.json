@@ -3,6 +3,7 @@
   "extends": ["plugin:@typescript-eslint/recommended", "prettier"],
   "rules": {
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-var-requires": "off",
     "indent": ["warn", 2],
     "linebreak-style": ["error", "unix"],
