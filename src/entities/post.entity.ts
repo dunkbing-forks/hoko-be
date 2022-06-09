@@ -28,32 +28,32 @@ export class Posts extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column()
+  @Column({ name: "title", type: "nvarchar", length: 255 })
   title: string;
 
-  @Column()
+  @Column({ name: "contents", type: "text" })
   contents: string;
 
-  @Column()
+  @Column({ name: "description", type: "nvarchar", length: 255 })
   description: string;
 
-  @Column({ default: true })
+  @Column({ name: "active", type: "tinyint", default: 1 })
   active: boolean;
 
-  @Column({ default: Privacy.PUBLIC })
+  @Column({ type: "enum", enum: Privacy, default: Privacy.PUBLIC })
   privacy: Privacy;
 
-  @CreateDateColumn({ name: "created_at" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @Column()
+  @Column({ name: "owner_id", type: "int" })
   ownerId: number;
 
   @ManyToOne(() => User, (user) => user.wallets)
-  @JoinColumn({ name: "ownerId", referencedColumnName: "id" })
+  @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
   user: User;
 
   @OneToMany(() => Comments, (comment) => comment.post, {

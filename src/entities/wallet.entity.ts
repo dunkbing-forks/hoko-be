@@ -14,25 +14,25 @@ export class Wallets extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column()
+  @Column({ name: "wallet_address", type: "varchar", length: 255 })
   walletAddress: string;
 
-  @Column()
+  @Column({ name: "wallet_private_key", type: "varchar", length: 255 })
   walletPrivateKey: string;
 
-  @Column({ default: true })
+  @Column({ name: "active", type: "tinyint", default: 1 })
   active: boolean;
 
-  @Column()
+  @Column({ name: "owner_id", type: "int" })
   ownerId: number;
 
-  @CreateDateColumn({ name: "created_at" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.wallets)
-  @JoinColumn({ name: "ownerId", referencedColumnName: "id" })
+  @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
   user: User;
 }

@@ -26,9 +26,6 @@ config();
       logging: false,
       autoLoadEntities: true,
       entities: [join(__dirname, "**/**.entity{.ts,.js}")],
-      cli: {
-        entitiesDir: "src/entities",
-      },
       subscribers: [AutoEncryptSubscriber],
     }),
     AuthModule,

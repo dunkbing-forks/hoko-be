@@ -4,21 +4,24 @@ import {
   BaseEntity,
   ManyToOne,
   JoinColumn,
-  PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { Posts } from "./post.entity";
 
 @Entity("actions")
 export class ActionsPost extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn("increment", { name: "id", type: "int" })
+  id: number;
+
+  @Column({ name: "user_id", type: "int" })
   userId: number;
 
-  @PrimaryColumn()
+  @Column({ name: "post_id", type: "int" })
   postId: number;
 
-  @PrimaryColumn()
+  @Column({ name: "action", type: "varchar" })
   action: number;
 
   @CreateDateColumn({ name: "created_at" })
@@ -28,6 +31,6 @@ export class ActionsPost extends BaseEntity {
   updatedAt: Date;
 
   @ManyToOne(() => Posts, (post) => post.comments)
-  @JoinColumn({ name: "postId", referencedColumnName: "id" })
+  @JoinColumn({ name: "post_id", referencedColumnName: "id" })
   post: Posts;
 }

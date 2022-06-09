@@ -15,25 +15,25 @@ export class Media extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column()
+  @Column({ name: "media_type", type: "varchar" })
   mediaType: string;
 
-  @Column()
+  @Column({ name: "url", type: "varchar" })
   url: string;
 
-  @Column()
+  @Column({ name: "extension", type: "varchar", length: 50 })
   extension: string;
 
-  @Column()
+  @Column({ name: "post_id", type: "int" })
   postId: number;
 
-  @CreateDateColumn({ name: "created_at" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
   @ManyToOne(() => Posts, (post) => post.media)
-  @JoinColumn({ name: "postId", referencedColumnName: "id" })
+  @JoinColumn({ name: "post_id", referencedColumnName: "id" })
   post: Posts;
 }

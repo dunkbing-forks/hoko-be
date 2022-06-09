@@ -15,37 +15,37 @@ export class ContactInfo extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column()
+  @Column({ name: "first_name", type: "nvarchar", length: 50 })
   firstName: string;
 
-  @Column()
-  lastName?: string;
+  @Column({ name: "last_name", type: "nvarchar", length: 50 })
+  lastName: string;
 
-  @Column()
+  @Column({ name: "email", unique: true, type: "nvarchar", length: 100 })
   email: string;
 
-  @Column()
+  @Column({ name: "phone", type: "nvarchar", length: 20 })
   phone?: string;
 
-  @Column()
+  @Column({ name: "date_of_birth", nullable: true, type: "date" })
   dateOfBirth?: Date;
 
   @Column({ type: "text", nullable: true })
   address?: string;
 
-  @Column()
+  @Column({ name: "avatar", nullable: true, type: "varchar", length: 255 })
   avatar?: string;
 
-  @Column()
+  @Column({ name: "owner_id", type: "int" })
   ownerId: number;
 
-  @CreateDateColumn({ name: "created_at" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
   @OneToOne(() => User, (user) => user.contactInfo, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "ownerId", referencedColumnName: "id" })
+  @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
   user: User;
 }

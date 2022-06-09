@@ -19,29 +19,29 @@ export class Comments extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column()
+  @Column({ name: "title", type: "nvarchar", length: 255 })
   title: string;
 
-  @Column()
+  @Column({ name: "description", type: "nvarchar", length: 255 })
   description: string;
 
-  @Column({ default: true })
+  @Column({ name: "active", type: "tinyint", default: 1 })
   active: boolean;
 
-  @Column()
+  @Column({ name: "contents", type: "nvarchar", length: 255 })
   contents: string;
 
-  @Column()
+  @Column({ name: "post_id", type: "int" })
   postId: number;
 
-  @CreateDateColumn({ name: "created_at" })
+  @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
   @ManyToOne(() => Posts, (post) => post.comments)
-  @JoinColumn({ name: "postId", referencedColumnName: "id" })
+  @JoinColumn({ name: "post_id", referencedColumnName: "id" })
   post: Posts;
 
   @OneToMany(() => ActionsComment, (actions) => actions.comment, {
