@@ -1,4 +1,4 @@
-import { Wallets } from './../entities/wallet.entity';
+import { Wallets } from "./../entities/wallet.entity";
 import { AuthModule } from "../auth/auth.module";
 import { ContactInfo } from "../entities/contact.entity";
 import { Module, MiddlewareConsumer } from "@nestjs/common";

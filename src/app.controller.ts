@@ -16,7 +16,7 @@ import { LocalAuthGuard } from "./auth/local-auth.guard";
 import { Response, Request } from "express";
 import { RefreshTokenGuard } from "./auth/refresh-token.guard";
 import * as CONSTANT from "./constant";
-import {PostsService} from "./posts/posts.service";
+import { PostsService } from "./posts/posts.service";
 
 interface IEmail {
   email: string;
@@ -30,7 +30,7 @@ export class AppController {
     private readonly postsService: PostsService
   ) {}
 
-  @Get('/posts/')
+  @Get("/posts/")
   async getPosts() {
     return await this.postsService.getPosts();
   }

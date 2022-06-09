@@ -8,8 +8,8 @@ import { AuthModule } from "./auth/auth.module";
 import { config } from "dotenv";
 import { MailModule } from "./mail/mail.module";
 import { AutoEncryptSubscriber } from "typeorm-encrypted";
-import { PostsController } from './posts/posts.controller';
-import { PostsModule } from './posts/posts.module';
+import { PostsController } from "./posts/posts.controller";
+import { PostsModule } from "./posts/posts.module";
 
 config();
 
@@ -17,12 +17,12 @@ config();
   imports: [
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: process.env.HOST,
+      host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
-      database: process.env.DATABASE_NAME,
-      synchronize: false,
-      username: process.env.USERNAME,
-      password: process.env.PASSWORD,
+      database: process.env.DB_NAME,
+      synchronize: true,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
       logging: false,
       autoLoadEntities: true,
       entities: [join(__dirname, "**/**.entity{.ts,.js}")],

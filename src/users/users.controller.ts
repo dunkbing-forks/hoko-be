@@ -51,8 +51,44 @@ export class UserController {
   @Get("/")
   async getAllUsers(): Promise<ResponseUser[]> {
     const data = await this.userService.getAllUsers();
-    return data.map(
-      (user: User): ResponseUser => {
+    return data.map((user: User): ResponseUser => {
+      return {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        active: user.active,
+        refreshToken: user.refreshToken,
+        refreshTokenExp: user.refreshTokenExp,
+        contactInfo: {
+          id: user.contactInfo.id,
+          firstName: user.contactInfo.firstName,
+          lastName: user.contactInfo.lastName,
+          email: user.contactInfo.email,
+          phone: user.contactInfo.phone,
+          dateOfBirth: user.contactInfo.dateOfBirth,
+          address: user.contactInfo.address,
+          avatar: user.contactInfo.avatar,
+          ownerId: user.contactInfo.ownerId,
+        },
+        wallets: user.wallets.map((wallet: Wallets) => {
+          return {
+            id: wallet.id,
+            walletAddress: wallet.walletAddress,
+            ownerId: wallet.ownerId,
+          };
+        }),
+      };
+    });
+  }
+
+  @Get("/:search/")
+  async searchUserByName(
+    @Res() res: Response,
+    @Param("search") username: string
+  ): Promise<any> {
+    try {
+      const data = await this.userService.searchUserByName(username);
+      const response = data.map((user: User): ResponseUser => {
         return {
           id: user.id,
           username: user.username,
@@ -79,49 +115,11 @@ export class UserController {
             };
           }),
         };
-      }
-    );
-  }
-
-  @Get("/:search/")
-  async searchUserByName(
-    @Res() res: Response,
-    @Param("search") username: string
-  ): Promise<any> {
-    try {
-      const data = await this.userService.searchUserByName(username);
-      const response = data.map(
-        (user: User): ResponseUser => {
-          return {
-            id: user.id,
-            username: user.username,
-            role: user.role,
-            active: user.active,
-            refreshToken: user.refreshToken,
-            refreshTokenExp: user.refreshTokenExp,
-            contactInfo: {
-              id: user.contactInfo.id,
-              firstName: user.contactInfo.firstName,
-              lastName: user.contactInfo.lastName,
-              email: user.contactInfo.email,
-              phone: user.contactInfo.phone,
-              dateOfBirth: user.contactInfo.dateOfBirth,
-              address: user.contactInfo.address,
-              avatar: user.contactInfo.avatar,
-              ownerId: user.contactInfo.ownerId,
-            },
-            wallets: user.wallets.map((wallet: Wallets) => {
-              return {
-                id: wallet.id,
-                walletAddress: wallet.walletAddress,
-                ownerId: wallet.ownerId,
-              };
-            }),
-          };
-        }
-      );
+      });
       return res.status(HttpStatus.OK).send(response);
-    } catch (error) {}
+    } catch (error) {
+      return res.status(HttpStatus.BAD_REQUEST).send(error.message);
+    }
   }
 
   @Get("/:id/")
@@ -174,7 +172,7 @@ export class UserController {
   }
 
   @Post("/get-information")
-  async getInformation(@Body() body: GetInformationDto): Promise<Object> {
+  async getInformation(@Body() body: GetInformationDto): Promise<unknown> {
     try {
       const user = await this.userService.getUserByName(body.username);
       return {
@@ -197,7 +195,7 @@ export class UserController {
   @Put("/update-information")
   async updateInformation(
     @Body() request: UpdateInformationDto
-  ): Promise<Object> {
+  ): Promise<unknown> {
     try {
       return await this.userService.updateUserInformation(request);
     } catch (error) {
@@ -208,7 +206,7 @@ export class UserController {
   }
 
   @Put("/update-active")
-  async updateActive(@Body() request: ActiveUser): Promise<Object> {
+  async updateActive(@Body() request: ActiveUser): Promise<unknown> {
     try {
       const user = await this.userService.updateUserActive(request);
       return user;
@@ -220,7 +218,7 @@ export class UserController {
   }
 
   @Put("/update-role")
-  async updateRole(@Body() request: RoleUser): Promise<Object> {
+  async updateRole(@Body() request: RoleUser): Promise<unknown> {
     try {
       const user = await this.userService.updateUserRole(request);
       return user;

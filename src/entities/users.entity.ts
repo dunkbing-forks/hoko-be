@@ -4,7 +4,9 @@ import {
   OneToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  BaseEntity, CreateDateColumn, UpdateDateColumn,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { ContactInfo } from "./contact.entity";
 import { Wallets } from "./wallet.entity";
@@ -33,10 +35,10 @@ export class User extends BaseEntity {
   @Column({ type: "datetime", nullable: true, name: "refreshtokenexp" })
   refreshTokenExp: Date;
 
-  @CreateDateColumn({name: 'created_at'})
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at'})
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
   @OneToOne(() => ContactInfo, (contactInfo) => contactInfo.user, {

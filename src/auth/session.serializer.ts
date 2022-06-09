@@ -1,4 +1,4 @@
-import { PassportSerializer } from '@nestjs/passport';
+import { PassportSerializer } from "@nestjs/passport";
 
 export class SessionSerializer extends PassportSerializer {
   // constructor(private readonly userService: UserService){

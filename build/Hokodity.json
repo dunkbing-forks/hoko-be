@@ -1176,9 +1176,7 @@
   "ast": {
     "absolutePath": "project:/contracts/Hokodity.sol",
     "exportedSymbols": {
-      "Hokodity": [
-        55
-      ]
+      "Hokodity": [55]
     },
     "id": 56,
     "license": "MIT",
@@ -1186,12 +1184,7 @@
     "nodes": [
       {
         "id": 1,
-        "literals": [
-          "solidity",
-          "^",
-          "0.8",
-          ".11"
-        ],
+        "literals": ["solidity", "^", "0.8", ".11"],
         "nodeType": "PragmaDirective",
         "src": "32:24:0"
       },
@@ -1203,9 +1196,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 55,
-        "linearizedBaseContracts": [
-          55
-        ],
+        "linearizedBaseContracts": [55],
         "name": "Hokodity",
         "nameLocation": "67:8:0",
         "nodeType": "ContractDefinition",
@@ -1546,10 +1537,7 @@
                       "id": 24,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "252:7:0",
                       "typeDescriptions": {

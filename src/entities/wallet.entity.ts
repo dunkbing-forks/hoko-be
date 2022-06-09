@@ -4,7 +4,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   BaseEntity,
-  JoinColumn, CreateDateColumn, UpdateDateColumn,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { User } from "./users.entity";
 @Entity("wallets")
@@ -18,16 +20,16 @@ export class Wallets extends BaseEntity {
   @Column()
   walletPrivateKey: string;
 
-  @Column({default: true})
+  @Column({ default: true })
   active: boolean;
 
   @Column()
   ownerId: number;
 
-  @CreateDateColumn({name: 'created_at'})
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({name: 'updated_at'})
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.wallets)
