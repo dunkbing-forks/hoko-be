@@ -17,18 +17,21 @@ import { Response, Request } from "express";
 import { RefreshTokenGuard } from "./auth/refresh-token.guard";
 import * as CONSTANT from "./constant";
 import { PostsService } from "./posts/posts.service";
+import { BaseController } from "./controllers/base-controller";
 
 interface IEmail {
   email: string;
 }
 @Controller()
-export class AppController {
+export class AppController extends BaseController {
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
     private readonly userService: UserService,
     private readonly postsService: PostsService
-  ) {}
+  ) {
+    super();
+  }
 
   @Get("/posts/")
   async getPosts() {
@@ -54,21 +57,7 @@ export class AppController {
   async login(@Req() req: Request, @Res() res: Response) {
     try {
       const info = await this.authService.login(req);
-      const secretData = {
-        jwt_token: info.access_token,
-        refresh_token: info.refresh_token,
-      };
-      return res
-        .status(HttpStatus.ACCEPTED)
-        .cookie("token", secretData, {
-          sameSite: "strict",
-          path: "/",
-          maxAge: 1.5 * 60 * 60 * 1000,
-          expires: new Date(new Date().getTime() + CONSTANT.TOKEN_LIFE * 60000),
-          secure: true,
-          httpOnly: true,
-        })
-        .send(info.account);
+      return res.status(HttpStatus.ACCEPTED).send(this.toJson(info));
     } catch (error) {
       console.log("login:\n", error);
     }
