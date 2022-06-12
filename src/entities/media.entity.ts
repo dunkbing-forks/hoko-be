@@ -15,7 +15,7 @@ export class MediaEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ name: "media_type", type: "varchar" })
+  @Column({ name: "media_type", nullable: true, type: "varchar" })
   mediaType: string;
 
   @Column({ name: "url", type: "varchar" })

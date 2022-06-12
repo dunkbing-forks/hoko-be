@@ -32,10 +32,10 @@ export class AuthService {
     const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
     if (!user.active) throw new UnauthorizedException();
     return {
-      access_token: this.jwtService.sign({
-        name: user.username,
+      accessToken: this.jwtService.sign({
+        username: user.username,
         role: user.role,
-        sub: user.id,
+        id: user.id,
       }),
       refresh_token: refreshJwtToken,
       account: {
@@ -68,7 +68,7 @@ export class AuthService {
 
     const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
     return {
-      access_token: this.jwtService.sign({
+      accessToken: this.jwtService.sign({
         name: user.username,
         role: user.role,
         sub: user.id,

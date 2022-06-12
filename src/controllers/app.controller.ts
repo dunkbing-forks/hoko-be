@@ -33,11 +33,6 @@ export class AppController extends BaseController {
     super();
   }
 
-  @Get("/posts/")
-  async getPosts() {
-    return await this.postsService.getPosts();
-  }
-
   @Get("/forgot-password")
   async forgotPassword(@Res() res: Response, @Query() query: IEmail) {
     try {
@@ -68,7 +63,7 @@ export class AppController extends BaseController {
     try {
       const info = await this.authService.loginGoogle(req);
       const secretData = {
-        jwt_token: info.access_token,
+        jwtToken: info.accessToken,
         refresh_token: info.refresh_token,
       };
       return res
@@ -98,7 +93,7 @@ export class AppController extends BaseController {
       const token = await this.authService.getJwtToken(req.body.id);
       const refreshToken = await this.authService.getRefreshToken(req.body.id);
       const secretData = {
-        jwt_token: token,
+        jwtToken: token,
         refresh_token: refreshToken,
       };
       res

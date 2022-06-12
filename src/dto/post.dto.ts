@@ -3,14 +3,8 @@ import { Privacy } from "../entities/post.entity";
 import { MediaType } from "../common/types";
 
 export class UpdatePostDto {
-  @IsNumber()
-  readonly postId: number;
-
   @IsString()
-  readonly title: string;
-
-  @IsString()
-  readonly contents: string;
+  readonly content: string;
 
   @IsString()
   readonly medias: MediaType[];
@@ -30,10 +24,7 @@ export class CreatePostDto {
   ownerId?: number;
 
   @IsString()
-  readonly title: string;
-
-  @IsString()
-  readonly contents: string;
+  readonly content: string;
 
   @IsString()
   readonly medias: MediaType[];

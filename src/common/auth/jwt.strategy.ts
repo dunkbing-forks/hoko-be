@@ -1,8 +1,8 @@
-import { Request } from "express";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
 import { config } from "dotenv";
+import { UserReqPayload } from "../../dto/user.dto";
 
 config();
 
@@ -10,22 +10,16 @@ config();
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          const secretData =
-            request?.cookies["token"] || request.headers["x-access-token"];
-          return secretData?.jwt_token;
-        },
-      ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SIGN_SECRET,
     });
   }
 
-  async validate(payload: any) {
+  validate(payload: any): UserReqPayload {
     return {
       username: payload.username,
-      sub: payload.id,
+      id: payload.id,
     };
   }
 }

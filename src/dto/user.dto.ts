@@ -86,3 +86,8 @@ export class UpdateInformationDto {
   @IsString()
   readonly avatar?: string;
 }
+
+export type UserReqPayload = {
+  id: number
+  username: string
+}

@@ -1,9 +1,9 @@
 export class BaseController {
-  protected toJson(data: any, message = "", status = "success"): any {
+  protected toJson(data: any, otherInfo: {message?: string, status?: string} = {}): any {
     return {
       data,
-      message,
-      status,
+      message: otherInfo.message || "",
+      status: otherInfo.status || "success",
     };
   }
 }

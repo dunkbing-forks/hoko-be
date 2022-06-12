@@ -27,9 +27,8 @@ export class PostsService {
 
   async createPost(post: CreatePostDto): Promise<PostEntity> {
     const postEntity = new PostEntity();
-    postEntity.title = post.title;
     postEntity.description = post.description;
-    postEntity.contents = post.contents;
+    postEntity.content = post.content;
 
     postEntity.privacy = post.privacy;
     postEntity.ownerId = post.ownerId;
@@ -53,13 +52,12 @@ export class PostsService {
     return currentPost;
   }
 
-  async updatePost(post: UpdatePostDto): Promise<PostEntity> {
-    const currentPost = await this.postsRepository.findOne(post.postId);
+  async updatePost(id: number, post: UpdatePostDto): Promise<PostEntity> {
+    const currentPost = await this.postsRepository.findOne(id);
 
     if (currentPost) {
-      currentPost.title = post.title;
       currentPost.description = post.description;
-      currentPost.contents = post.contents;
+      currentPost.content = post.content;
 
       if (post.medias.length > 0) {
         const mediaOfPost = await this.mediaRepository
@@ -75,6 +73,7 @@ export class PostsService {
           const newMedia = new MediaEntity();
           newMedia.url = media.url;
           newMedia.extension = media.extension;
+          newMedia.postId = currentPost.id;
           await newMedia.save();
         }
       }

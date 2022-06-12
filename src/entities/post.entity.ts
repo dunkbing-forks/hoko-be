@@ -26,13 +26,10 @@ export class PostEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ name: "title", type: "nvarchar", length: 255 })
-  title: string;
+  @Column({ name: "content", type: "text" })
+  content: string;
 
-  @Column({ name: "contents", type: "text" })
-  contents: string;
-
-  @Column({ name: "description", type: "nvarchar", length: 255 })
+  @Column({ name: "description", type: "nvarchar", length: 255, default: "" })
   description: string;
 
   @Column({ name: "active", type: "tinyint", default: 1 })
