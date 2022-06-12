@@ -1,7 +1,7 @@
-import { UserService } from "./services/users.service";
-import { MailService } from "./services/mail.service";
-import { JwtAuthGuard } from "./auth/jwt-auth.guard";
-import { AuthService } from "./auth/auth.service";
+import { UserService } from "../services/user.service";
+import { MailService } from "../services/mail.service";
+import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
+import { AuthService } from "../services/auth.service";
 import {
   Controller,
   Get,
@@ -12,12 +12,12 @@ import {
   HttpStatus,
   Query,
 } from "@nestjs/common";
-import { LocalAuthGuard } from "./auth/local-auth.guard";
+import { LocalAuthGuard } from "../common/auth/local-auth.guard";
 import { Response, Request } from "express";
-import { RefreshTokenGuard } from "./auth/refresh-token.guard";
-import * as CONSTANT from "./constant";
-import { PostsService } from "./posts/posts.service";
-import { BaseController } from "./controllers/base-controller";
+import { RefreshTokenGuard } from "../common/auth/refresh-token.guard";
+import * as CONSTANT from "../common/constants";
+import { PostsService } from "../services/post.service";
+import { BaseController } from "./base-controller";
 
 interface IEmail {
   email: string;

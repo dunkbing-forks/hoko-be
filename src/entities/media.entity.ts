@@ -8,10 +8,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Posts } from "./post.entity";
+import { PostEntity } from "./post.entity";
 
 @Entity("media")
-export class Media extends BaseEntity {
+export class MediaEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -33,7 +33,7 @@ export class Media extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @ManyToOne(() => Posts, (post) => post.media)
+  @ManyToOne(() => PostEntity, (post) => post.media)
   @JoinColumn({ name: "post_id", referencedColumnName: "id" })
-  post: Posts;
+  post: PostEntity;
 }

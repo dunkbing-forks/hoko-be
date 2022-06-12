@@ -1,13 +1,13 @@
-import { JwtStrategy } from "./jwt.strategy";
+import { JwtStrategy } from "../common/auth/jwt.strategy";
 import { Module } from "@nestjs/common";
-import { AuthService } from "./auth.service";
-import { UserModule } from "../users/users.module";
+import { AuthService } from "../services/auth.service";
+import { UserModule } from "./users.module";
 import { PassportModule } from "@nestjs/passport";
-import { LocalStrategy } from "./local.strategy";
+import { LocalStrategy } from "../common/auth/local.strategy";
 import { JwtModule } from "@nestjs/jwt";
 import { config } from "dotenv";
-import { RefreshStrategy } from "./refresh.strategy";
-import { MailModule } from "../mail/mail.module";
+import { RefreshStrategy } from "../common/auth/refresh.strategy";
+import { MailModule } from "./mail.module";
 
 config();
 @Module({

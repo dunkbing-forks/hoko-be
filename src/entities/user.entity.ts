@@ -8,12 +8,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { ContactInfo } from "./contact.entity";
-import { Wallets } from "./wallet.entity";
-import { Posts } from "./post.entity";
+import { ContactEntity } from "./contact.entity";
+import { WalletEntity } from "./wallet.entity";
+import { PostEntity } from "./post.entity";
 
 @Entity("users")
-export class User extends BaseEntity {
+export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -41,18 +41,18 @@ export class User extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @OneToOne(() => ContactInfo, (contactInfo) => contactInfo.user, {
+  @OneToOne(() => ContactEntity, (contactInfo) => contactInfo.user, {
     cascade: true,
   })
-  contactInfo: ContactInfo;
+  contactInfo: ContactEntity;
 
-  @OneToMany(() => Wallets, (wallet) => wallet.user, {
+  @OneToMany(() => WalletEntity, (wallet) => wallet.user, {
     cascade: true,
   })
-  wallets: Wallets[];
+  wallets: WalletEntity[];
 
-  @OneToMany(() => Posts, (post) => post.user, {
+  @OneToMany(() => PostEntity, (post) => post.user, {
     cascade: true,
   })
-  post: Posts[];
+  post: PostEntity[];
 }

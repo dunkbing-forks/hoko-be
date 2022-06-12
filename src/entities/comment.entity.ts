@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  OneToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   BaseEntity,
@@ -11,11 +10,11 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { Posts } from "./post.entity";
-import { ActionsComment } from "./actions_comments.entity";
+import { PostEntity } from "./post.entity";
+import { ActionCommentEntity } from "./action_comment.entity";
 
 @Entity("comments")
-export class Comments extends BaseEntity {
+export class CommentEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -40,12 +39,12 @@ export class Comments extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @ManyToOne(() => Posts, (post) => post.comments)
+  @ManyToOne(() => PostEntity, (post) => post.comments)
   @JoinColumn({ name: "post_id", referencedColumnName: "id" })
-  post: Posts;
+  post: PostEntity;
 
-  @OneToMany(() => ActionsComment, (actions) => actions.comment, {
+  @OneToMany(() => ActionCommentEntity, (actions) => actions.comment, {
     cascade: true,
   })
-  actions: ActionsComment[];
+  actions: ActionCommentEntity[];
 }

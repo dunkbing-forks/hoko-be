@@ -9,32 +9,29 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { PostsService } from "./posts.service";
-import { CreatePostDto } from "./dto/create-post.dto";
+import { PostsService } from "../services/post.service";
 import { Response, Request } from "express";
-import { AuthService } from "../auth/auth.service";
-import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { UpdatePostDto } from "./dto/update-post.dto";
-import { responseForm } from "../constant_type";
+import { AuthService } from "../services/auth.service";
+import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
+import { ResponseForm } from "../common/types";
+import { BaseController } from "./base-controller";
+import { UpdatePostDto, CreatePostDto } from "../dto/post.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller("posts")
-export class PostsController {
+export class PostsController extends BaseController {
   constructor(
     private readonly postsService: PostsService,
     private readonly authService: AuthService
-  ) {}
+  ) {
+    super();
+  }
 
   @Get("/list-post")
   async getPostsByUser(@Req() req: Request, @Res() res: Response) {
     const user = this.authService.verifyToken(req.cookies.token.jwt_token);
     const data = await this.postsService.getPostByUserId(user.sub);
-    const response: responseForm = {
-      message: "Get post success",
-      error: false,
-      data,
-    };
-    return res.status(HttpStatus.OK).send(response);
+    return res.status(HttpStatus.OK).send(this.toJson(data));
   }
 
   @Post("/create")
@@ -47,7 +44,7 @@ export class PostsController {
     post.ownerId = user.sub;
     const data = await this.postsService.createPost(post);
 
-    const response: responseForm = {
+    const response: ResponseForm = {
       message: "Create post success",
       error: false,
       data,
@@ -64,7 +61,7 @@ export class PostsController {
   ) {
     const data = await this.postsService.updatePost(post);
     if (!data) {
-      const response: responseForm = {
+      const response: ResponseForm = {
         message: "Post not found",
         error: true,
         data,
@@ -72,7 +69,7 @@ export class PostsController {
 
       return res.status(HttpStatus.BAD_REQUEST).send(response);
     }
-    const response: responseForm = {
+    const response: ResponseForm = {
       message: "Update post success",
       error: false,
       data,

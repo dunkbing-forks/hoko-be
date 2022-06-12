@@ -8,9 +8,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { User } from "./users.entity";
+import { UserEntity } from "./user.entity";
 @Entity("wallets")
-export class Wallets extends BaseEntity {
+export class WalletEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -32,7 +32,7 @@ export class Wallets extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.wallets)
+  @ManyToOne(() => UserEntity, (user) => user.wallets)
   @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
-  user: User;
+  user: UserEntity;
 }

@@ -8,10 +8,10 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Posts } from "./post.entity";
+import { PostEntity } from "./post.entity";
 
 @Entity("actions")
-export class ActionsPost extends BaseEntity {
+export class ActionPostEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment", { name: "id", type: "int" })
   id: number;
 
@@ -30,7 +30,7 @@ export class ActionsPost extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @ManyToOne(() => Posts, (post) => post.comments)
+  @ManyToOne(() => PostEntity, (post) => post.comments)
   @JoinColumn({ name: "post_id", referencedColumnName: "id" })
-  post: Posts;
+  post: PostEntity;
 }

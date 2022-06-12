@@ -1,12 +1,12 @@
-import { Wallets } from "./../entities/wallet.entity";
-import { ContactInfo } from "../entities/contact.entity";
-import { User } from "../entities/users.entity";
+import { WalletEntity } from "../entities/wallet.entity";
+import { ContactEntity } from "../entities/contact.entity";
+import { UserEntity } from "../entities/user.entity";
 import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { MoreThan, MoreThanOrEqual, Repository } from "typeorm";
+import { MoreThanOrEqual, Repository } from "typeorm";
 import * as randomToken from "rand-token";
 import * as moment from "moment";
-import * as CONSTANTS from "../constant";
+import * as CONSTANTS from "../common/constants";
 import * as bcrypt from "bcrypt";
 import { BaseService } from "./base.service";
 
@@ -43,21 +43,21 @@ interface ChangePassword {
 @Injectable()
 export class UserService extends BaseService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(ContactInfo)
-    private readonly contactRepository: Repository<ContactInfo>,
-    @InjectRepository(Wallets)
-    private readonly walletsRepository: Repository<Wallets>
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(ContactEntity)
+    private readonly contactRepository: Repository<ContactEntity>,
+    @InjectRepository(WalletEntity)
+    private readonly walletsRepository: Repository<WalletEntity>
   ) {
     super();
   }
 
-  async getUsers(): Promise<User[]> {
+  async getUsers(): Promise<UserEntity[]> {
     return this.userRepository.find();
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserEntity[]> {
     return this.userRepository
       .createQueryBuilder("users")
       .where("role != 1")
@@ -66,7 +66,7 @@ export class UserService extends BaseService {
       .getMany();
   }
 
-  async getUserByName(username: string): Promise<User> {
+  async getUserByName(username: string): Promise<UserEntity> {
     const user = await this.userRepository
       .createQueryBuilder("users")
       .where("username = :username", { username: username })
@@ -76,7 +76,7 @@ export class UserService extends BaseService {
     return user;
   }
 
-  async searchUserByName(username: string): Promise<User[]> {
+  async searchUserByName(username: string): Promise<UserEntity[]> {
     return this.userRepository
       .createQueryBuilder("users")
       .where("username like :name", { name: `%${username}%` })
@@ -85,12 +85,12 @@ export class UserService extends BaseService {
       .getMany();
   }
 
-  async insertUser(user: IUser): Promise<User> {
+  async insertUser(user: IUser): Promise<UserEntity> {
     try {
       await this.startTransaction();
       const web3 = new Web3();
 
-      const newUser = await this.queryRunner.manager.save(User, {
+      const newUser = await this.queryRunner.manager.save(UserEntity, {
         username: user.username,
         password: await bcrypt.hash(
           user.password,
@@ -105,7 +105,7 @@ export class UserService extends BaseService {
           .format("YYYY/MM/DD HH:mm:ss"),
       });
       if (newUser) {
-        await this.queryRunner.manager.save(ContactInfo, {
+        await this.queryRunner.manager.save(ContactEntity, {
           firstName: user.firstName,
           lastName: user.lastName,
           address: user.address,
@@ -116,7 +116,7 @@ export class UserService extends BaseService {
         });
 
         const response = web3.eth.accounts.create();
-        await this.queryRunner.manager.save(Wallets, {
+        await this.queryRunner.manager.save(WalletEntity, {
           walletAddress: response.address,
           walletPrivateKey: response.privateKey,
           user: newUser,
@@ -214,7 +214,7 @@ export class UserService extends BaseService {
     username: string,
     refreshToken: string,
     currentDate: Date
-  ): Promise<User> {
+  ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       username: username,
       refreshToken: refreshToken,
@@ -227,12 +227,12 @@ export class UserService extends BaseService {
     return user;
   }
 
-  async getUserById(userId: number): Promise<User> {
+  async getUserById(userId: number): Promise<UserEntity> {
     const user = this.userRepository.findOne(userId);
     return user;
   }
 
-  async updateUserInformation(req: any): Promise<ContactInfo> {
+  async updateUserInformation(req: any): Promise<ContactEntity> {
     const contact = await this.contactRepository.findOne({ ownerId: req.id });
     contact.firstName = req.firstName;
     contact.lastName = req.lastName;
@@ -246,14 +246,14 @@ export class UserService extends BaseService {
     return contact;
   }
 
-  async updateUserActive(req: any): Promise<User> {
+  async updateUserActive(req: any): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ id: req.id });
     user.active = req.active;
     user.save();
     return user;
   }
 
-  async updateUserRole(req: any): Promise<User> {
+  async updateUserRole(req: any): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ id: req.roleId });
     user.role = req.roleValue;
     user.save();

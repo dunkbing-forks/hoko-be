@@ -1,6 +1,6 @@
-import { MailService } from "./../services/mail.service";
+import { MailService } from "./mail.service";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { UserService } from "../services/users.service";
+import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import * as moment from "moment";
 import { JwtService } from "@nestjs/jwt";
@@ -20,7 +20,7 @@ export class AuthService {
     const user = await this.usersService.getUserByName(username);
     const isLogin = user ? await bcrypt.compare(pass, user.password) : false;
     if (user && isLogin) {
-      const { password, ...result } = user;
+      const { ...result } = user;
       return result;
     }
     return null;
