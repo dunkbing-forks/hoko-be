@@ -1,36 +1,34 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Posts, Privacy } from "../entities/post.entity";
-import { ActionsPost } from "../entities/actions_post.entity";
-import { CreatePostDto } from "./dto/create-post.dto";
-import { UpdatePostDto } from "./dto/update-post.dto";
-import { Media } from "../entities/media.entity";
+import { PostEntity  } from "../entities/post.entity";
+import { ActionPostEntity } from "../entities/action_post.entity";
+import { CreatePostDto, UpdatePostDto } from "../dto/post.dto";
+import { MediaEntity } from "../entities/media.entity";
 const moment = require("moment");
 
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectRepository(Posts)
-    private readonly postsRepository: Repository<Posts>,
-    @InjectRepository(ActionsPost)
-    private readonly actionsPostRepository: Repository<ActionsPost>,
-    @InjectRepository(Media)
-    private readonly mediaRepository: Repository<Media>
+    @InjectRepository(PostEntity)
+    private readonly postsRepository: Repository<PostEntity>,
+    @InjectRepository(ActionPostEntity)
+    private readonly actionsPostRepository: Repository<ActionPostEntity>,
+    @InjectRepository(MediaEntity)
+    private readonly mediaRepository: Repository<MediaEntity>
   ) {}
 
-  async getPosts(): Promise<Posts[]> {
+  async getPosts(): Promise<PostEntity[]> {
     return this.postsRepository
       .createQueryBuilder("posts")
       .where("posts.active = :active", { active: true })
       .getMany();
   }
 
-  async createPost(post: CreatePostDto): Promise<Posts> {
-    const postEntity = new Posts();
-    postEntity.title = post.title;
+  async createPost(post: CreatePostDto): Promise<PostEntity> {
+    const postEntity = new PostEntity();
     postEntity.description = post.description;
-    postEntity.contents = post.contents;
+    postEntity.content = post.content;
 
     postEntity.privacy = post.privacy;
     postEntity.ownerId = post.ownerId;
@@ -42,7 +40,7 @@ export class PostsService {
     const currentPost = await this.postsRepository.save(postEntity);
 
     for (const media of post.medias) {
-      const newMedia = new Media();
+      const newMedia = new MediaEntity();
       newMedia.url = media.url;
       newMedia.extension = media.extension;
       newMedia.mediaType = media.mediaType;
@@ -54,13 +52,12 @@ export class PostsService {
     return currentPost;
   }
 
-  async updatePost(post: UpdatePostDto): Promise<Posts> {
-    const currentPost = await this.postsRepository.findOne(post.postId);
+  async updatePost(id: number, post: UpdatePostDto): Promise<PostEntity> {
+    const currentPost = await this.postsRepository.findOne(id);
 
     if (currentPost) {
-      currentPost.title = post.title;
       currentPost.description = post.description;
-      currentPost.contents = post.contents;
+      currentPost.content = post.content;
 
       if (post.medias.length > 0) {
         const mediaOfPost = await this.mediaRepository
@@ -73,9 +70,10 @@ export class PostsService {
         }
 
         for (const media of post.medias) {
-          const newMedia = new Media();
+          const newMedia = new MediaEntity();
           newMedia.url = media.url;
           newMedia.extension = media.extension;
+          newMedia.postId = currentPost.id;
           await newMedia.save();
         }
       }
@@ -89,12 +87,12 @@ export class PostsService {
     return null;
   }
 
-  async deletePost(post: Posts): Promise<Posts> {
+  async deletePost(post: PostEntity): Promise<PostEntity> {
     post.active = false;
     return this.postsRepository.save(post);
   }
 
-  async getPostByUserId(userId: number): Promise<Posts[]> {
+  async getPostByUserId(userId: number): Promise<PostEntity[]> {
     return this.postsRepository
       .createQueryBuilder("posts")
       .where("posts.ownerId = :userId", { userId })
@@ -102,7 +100,7 @@ export class PostsService {
       .getMany();
   }
 
-  async getTop5Posts(): Promise<Posts[]> {
+  async getTop5Posts(): Promise<PostEntity[]> {
     return this.postsRepository
       .createQueryBuilder("posts")
       .where("posts.active = :active", { active: true })
@@ -111,7 +109,7 @@ export class PostsService {
       .getMany();
   }
 
-  async getViralPosts(): Promise<Posts[]> {
+  async getViralPosts(): Promise<PostEntity[]> {
     const countActions = await this.postsRepository
       .createQueryBuilder("posts")
       .leftJoinAndSelect("posts.actionsPost", "actionsPost")

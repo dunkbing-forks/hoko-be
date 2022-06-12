@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
 import { google } from "googleapis";
 import { config } from "dotenv";
-import { User } from "../entities/users.entity";
+import { UserEntity } from "../entities/user.entity";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 config();
@@ -12,7 +12,7 @@ config();
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendGoogleEmail(user: User, password: string) {
+  async sendGoogleEmail(user: UserEntity, password: string) {
     const oauth2Client = new google.auth.OAuth2(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
@@ -56,7 +56,7 @@ export class MailService {
     }
   }
 
-  async sendGoogleEmailForgot(user: User) {
+  async sendGoogleEmailForgot(user: UserEntity) {
     const oauth2Client = new google.auth.OAuth2(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,

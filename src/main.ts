@@ -1,8 +1,8 @@
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
+import { AppModule } from "./modules/app.module";
 import * as cookieParser from "cookie-parser";
 import { config } from "dotenv";
-import { AllExceptionsFilter } from "./common/exception-filter";
+import { AllExceptionsFilter } from "./common/middlewares/exception-filter";
 
 config();
 

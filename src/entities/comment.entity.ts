@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  OneToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   BaseEntity,
@@ -11,16 +10,13 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { Posts } from "./post.entity";
-import { ActionsComment } from "./actions_comments.entity";
+import { PostEntity } from "./post.entity";
+import { ActionCommentEntity } from "./action_comment.entity";
 
 @Entity("comments")
-export class Comments extends BaseEntity {
+export class CommentEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
-
-  @Column({ name: "title", type: "nvarchar", length: 255 })
-  title: string;
 
   @Column({ name: "description", type: "nvarchar", length: 255 })
   description: string;
@@ -28,8 +24,8 @@ export class Comments extends BaseEntity {
   @Column({ name: "active", type: "tinyint", default: 1 })
   active: boolean;
 
-  @Column({ name: "contents", type: "nvarchar", length: 255 })
-  contents: string;
+  @Column({ name: "content", type: "nvarchar", length: 255 })
+  content: string;
 
   @Column({ name: "post_id", type: "int" })
   postId: number;
@@ -40,12 +36,12 @@ export class Comments extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @ManyToOne(() => Posts, (post) => post.comments)
+  @ManyToOne(() => PostEntity, (post) => post.comments)
   @JoinColumn({ name: "post_id", referencedColumnName: "id" })
-  post: Posts;
+  post: PostEntity;
 
-  @OneToMany(() => ActionsComment, (actions) => actions.comment, {
+  @OneToMany(() => ActionCommentEntity, (actions) => actions.comment, {
     cascade: true,
   })
-  actions: ActionsComment[];
+  actions: ActionCommentEntity[];
 }

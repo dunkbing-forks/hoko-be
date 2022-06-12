@@ -1,27 +1,25 @@
-import { Wallets } from "./../entities/wallet.entity";
+import { WalletEntity } from "../entities/wallet.entity";
 import {
   Controller,
   Get,
   Post,
   Body,
   Put,
-  UseGuards,
   Res,
   Param,
   HttpStatus,
-  HttpException,
 } from "@nestjs/common";
-import { User } from "../entities/users.entity";
-import { UserService } from "../services/users.service";
-import { CreateUserDto } from "../dto/users.dto";
-import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { GetInformationDto } from "../dto/get-info.dto";
+import { UserEntity } from "../entities/user.entity";
+import { UserService } from "../services/user.service";
+import { CreateUserDto } from "../dto/user.dto";
+import {
+  GetInformationDto,
+  UpdateInformationDto,
+  ChangePasswordDto,
+  ActiveUser,
+  RoleUser,
+} from "../dto/user.dto";
 import { Response } from "express";
-import { UpdateInformationDto } from "../dto/update-infomation.dto";
-import * as CONSTANTS from "../constant";
-import { ChangePasswordDto } from "../dto/change-password.dto";
-import { ActiveUser } from "../dto/active-user.dto";
-import { RoleUser } from "../dto/role-user.dto";
 
 type ResponseUser = {
   id: number;
@@ -51,7 +49,7 @@ export class UserController {
   @Get("/")
   async getAllUsers(): Promise<ResponseUser[]> {
     const data = await this.userService.getAllUsers();
-    return data.map((user: User): ResponseUser => {
+    return data.map((user: UserEntity): ResponseUser => {
       return {
         id: user.id,
         username: user.username,
@@ -70,7 +68,7 @@ export class UserController {
           avatar: user.contactInfo.avatar,
           ownerId: user.contactInfo.ownerId,
         },
-        wallets: user.wallets.map((wallet: Wallets) => {
+        wallets: user.wallets.map((wallet: WalletEntity) => {
           return {
             id: wallet.id,
             walletAddress: wallet.walletAddress,
@@ -88,7 +86,7 @@ export class UserController {
   ): Promise<any> {
     try {
       const data = await this.userService.searchUserByName(username);
-      const response = data.map((user: User): ResponseUser => {
+      const response = data.map((user: UserEntity): ResponseUser => {
         return {
           id: user.id,
           username: user.username,
@@ -107,7 +105,7 @@ export class UserController {
             avatar: user.contactInfo.avatar,
             ownerId: user.contactInfo.ownerId,
           },
-          wallets: user.wallets.map((wallet: Wallets) => {
+          wallets: user.wallets.map((wallet: WalletEntity) => {
             return {
               id: wallet.id,
               walletAddress: wallet.walletAddress,
@@ -147,7 +145,7 @@ export class UserController {
         avatar: user.contactInfo.avatar,
         ownerId: user.contactInfo.ownerId,
       },
-      wallets: user.wallets.map((wallet: Wallets) => {
+      wallets: user.wallets.map((wallet: WalletEntity) => {
         return {
           id: wallet.id,
           walletAddress: wallet.walletAddress,
@@ -173,7 +171,7 @@ export class UserController {
       const user = await this.userService.getUserByName(body.username);
       return {
         ...user.contactInfo,
-        wallets: user.wallets.map((wallet: Wallets) => {
+        wallets: user.wallets.map((wallet: WalletEntity) => {
           return {
             id: wallet.id,
             walletAddress: wallet.walletAddress,

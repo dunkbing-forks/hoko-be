@@ -1,6 +1,6 @@
-import { MailService } from "./../services/mail.service";
+import { MailService } from "./mail.service";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { UserService } from "../services/users.service";
+import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import * as moment from "moment";
 import { JwtService } from "@nestjs/jwt";
@@ -20,7 +20,7 @@ export class AuthService {
     const user = await this.usersService.getUserByName(username);
     const isLogin = user ? await bcrypt.compare(pass, user.password) : false;
     if (user && isLogin) {
-      const { password, ...result } = user;
+      const { ...result } = user;
       return result;
     }
     return null;
@@ -32,10 +32,10 @@ export class AuthService {
     const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
     if (!user.active) throw new UnauthorizedException();
     return {
-      access_token: this.jwtService.sign({
-        name: user.username,
+      accessToken: this.jwtService.sign({
+        username: user.username,
         role: user.role,
-        sub: user.id,
+        id: user.id,
       }),
       refresh_token: refreshJwtToken,
       account: {
@@ -68,7 +68,7 @@ export class AuthService {
 
     const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
     return {
-      access_token: this.jwtService.sign({
+      accessToken: this.jwtService.sign({
         name: user.username,
         role: user.role,
         sub: user.id,

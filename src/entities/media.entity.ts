@@ -8,14 +8,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Posts } from "./post.entity";
+import { PostEntity } from "./post.entity";
 
 @Entity("media")
-export class Media extends BaseEntity {
+export class MediaEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ name: "media_type", type: "varchar" })
+  @Column({ name: "media_type", nullable: true, type: "varchar" })
   mediaType: string;
 
   @Column({ name: "url", type: "varchar" })
@@ -33,7 +33,7 @@ export class Media extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @ManyToOne(() => Posts, (post) => post.media)
+  @ManyToOne(() => PostEntity, (post) => post.media)
   @JoinColumn({ name: "post_id", referencedColumnName: "id" })
-  post: Posts;
+  post: PostEntity;
 }

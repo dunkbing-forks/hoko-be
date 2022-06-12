@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  OneToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   BaseEntity,
@@ -10,11 +9,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { User } from "./users.entity";
-import { Comments } from "./comments.entity";
-import { ActionsPost } from "./actions_post.entity";
-import { Wallets } from "./wallet.entity";
-import { Media } from "./media.entity";
+import { CommentEntity } from "./comment.entity";
+import { UserEntity } from "./user.entity";
+import { ActionPostEntity } from "./action_post.entity";
+import { MediaEntity } from "./media.entity";
 
 export enum Privacy {
   PUBLIC = "PUBLIC",
@@ -24,17 +22,14 @@ export enum Privacy {
 }
 
 @Entity("posts")
-export class Posts extends BaseEntity {
+export class PostEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ name: "title", type: "nvarchar", length: 255 })
-  title: string;
+  @Column({ name: "content", type: "text" })
+  content: string;
 
-  @Column({ name: "contents", type: "text" })
-  contents: string;
-
-  @Column({ name: "description", type: "nvarchar", length: 255 })
+  @Column({ name: "description", type: "nvarchar", length: 255, default: "" })
   description: string;
 
   @Column({ name: "active", type: "tinyint", default: 1 })
@@ -52,22 +47,22 @@ export class Posts extends BaseEntity {
   @Column({ name: "owner_id", type: "int" })
   ownerId: number;
 
-  @ManyToOne(() => User, (user) => user.wallets)
+  @ManyToOne(() => UserEntity, (user) => user.wallets)
   @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
-  user: User;
+  user: UserEntity;
 
-  @OneToMany(() => Comments, (comment) => comment.post, {
+  @OneToMany(() => CommentEntity, (comment) => comment.post, {
     cascade: true,
   })
-  comments?: Comments[];
+  comments?: CommentEntity[];
 
-  @OneToMany(() => ActionsPost, (actions) => actions.post, {
+  @OneToMany(() => ActionPostEntity, (actions) => actions.post, {
     cascade: true,
   })
-  actions?: ActionsPost[];
+  actions?: ActionPostEntity[];
 
-  @OneToMany(() => Media, (media) => media.post, {
+  @OneToMany(() => MediaEntity, (media) => media.post, {
     cascade: true,
   })
-  media: Media[];
+  media: MediaEntity[];
 }

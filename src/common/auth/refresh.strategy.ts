@@ -1,4 +1,4 @@
-import { AuthService } from "./auth.service";
+import { AuthService } from "../../services/auth.service";
 import { Request } from "express";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
@@ -14,7 +14,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           const secretData = request?.cookies["token"];
-          return secretData?.jwt_token;
+          return secretData?.jwtToken;
         },
       ]),
       ignoreExpiration: false,

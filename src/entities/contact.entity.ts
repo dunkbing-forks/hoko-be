@@ -8,10 +8,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { User } from "./users.entity";
+import { UserEntity } from "./user.entity";
 
 @Entity("contacts")
-export class ContactInfo extends BaseEntity {
+export class ContactEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -45,7 +45,9 @@ export class ContactInfo extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @OneToOne(() => User, (user) => user.contactInfo, { onDelete: "CASCADE" })
+  @OneToOne(() => UserEntity, (user) => user.contactInfo, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
-  user: User;
+  user: UserEntity;
 }
