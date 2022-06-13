@@ -66,13 +66,29 @@ export class UserService extends BaseService {
       .getMany();
   }
 
-  async getUserByName(username: string): Promise<UserEntity> {
-    const user = await this.userRepository
+  async getUserByName(account: string): Promise<UserEntity> {
+    let user = await this.userRepository
       .createQueryBuilder("users")
-      .where("username = :username", { username: username })
+      .where("email = :email", { email: account })
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .leftJoinAndSelect("users.wallets", "wallets")
-      .getOneOrFail();
+      .getOne();
+    if (!user) {
+      user = await this.userRepository
+        .createQueryBuilder("users")
+        .where("phone = :phone", { phone: account })
+        .leftJoinAndSelect("users.contactInfo", "contacts")
+        .leftJoinAndSelect("users.wallets", "wallets")
+        .getOne();
+    }
+    if (!user) {
+      user = await this.userRepository
+        .createQueryBuilder("users")
+        .where("username = :username", { username: account })
+        .leftJoinAndSelect("users.contactInfo", "contacts")
+        .leftJoinAndSelect("users.wallets", "wallets")
+        .getOne();
+    }
     return user;
   }
 
@@ -91,11 +107,13 @@ export class UserService extends BaseService {
       const web3 = new Web3();
 
       const newUser = await this.queryRunner.manager.save(UserEntity, {
-        username: user.username,
+        username: user.username ? user.username : "",
         password: await bcrypt.hash(
           user.password,
           CONSTANTS.ROUND_HASH_PASSWORD.ROUND
         ),
+        email: user.email,
+        phone: user.phone,
         role: CONSTANTS.ROLE.USER,
         active: user.active,
         refreshToken: randomToken.generate(16),
@@ -110,11 +128,8 @@ export class UserService extends BaseService {
           lastName: user.lastName,
           address: user.address,
           dateOfBirth: user.dateOfBirth,
-          email: user.email,
-          phone: user.phone,
           user: newUser,
         });
-
         const response = web3.eth.accounts.create();
         await this.queryRunner.manager.save(WalletEntity, {
           walletAddress: response.address,
@@ -158,44 +173,44 @@ export class UserService extends BaseService {
     };
   }
 
-  async insertUserByLoginGoogle(user: GoogleUser): Promise<any> {
-    try {
-      if (await this.contactRepository.findOne({ email: user.email })) {
-        throw new Error("email already exists...!");
-      }
-      const randomPassword = Math.random().toString(36).slice(-8);
-      const newUser = await this.userRepository
-        .create({
-          username: user.email,
-          password: await bcrypt.hash(
-            randomPassword,
-            CONSTANTS.ROUND_HASH_PASSWORD.ROUND
-          ),
-          role: CONSTANTS.ROLE.USER,
-          refreshToken: randomToken.generate(16),
-          refreshTokenExp: moment()
-            .utc()
-            .add(30, "minute")
-            .format("YYYY/MM/DD HH:mm:ss"),
-        })
-        .save();
-
-      await this.contactRepository
-        .create({
-          firstName: user.givenName,
-          lastName: user.familyName,
-          email: user.email,
-          avatar: user.imageUrl,
-          user: newUser,
-        })
-        .save();
-
-      return { newUser, randomPassword };
-    } catch (error) {
-      Logger.error(error);
-      return error;
-    }
-  }
+  // async insertUserByLoginGoogle(user: GoogleUser): Promise<any> {
+  //   try {
+  //     if (await this.contactRepository.findOne({ email: user.email })) {
+  //       throw new Error("email already exists...!");
+  //     }
+  //     const randomPassword = Math.random().toString(36).slice(-8);
+  //     const newUser = await this.userRepository
+  //       .create({
+  //         username: user.email,
+  //         password: await bcrypt.hash(
+  //           randomPassword,
+  //           CONSTANTS.ROUND_HASH_PASSWORD.ROUND
+  //         ),
+  //         role: CONSTANTS.ROLE.USER,
+  //         refreshToken: randomToken.generate(16),
+  //         refreshTokenExp: moment()
+  //           .utc()
+  //           .add(30, "minute")
+  //           .format("YYYY/MM/DD HH:mm:ss"),
+  //       })
+  //       .save();
+  //
+  //     await this.contactRepository
+  //       .create({
+  //         firstName: user.givenName,
+  //         lastName: user.familyName,
+  //         email: user.email,
+  //         avatar: user.imageUrl,
+  //         user: newUser,
+  //       })
+  //       .save();
+  //
+  //     return { newUser, randomPassword };
+  //   } catch (error) {
+  //     Logger.error(error);
+  //     return error;
+  //   }
+  // }
 
   async updateRefreshToken(userId: number): Promise<string> {
     const user = await this.userRepository.findOne(userId);
@@ -236,14 +251,12 @@ export class UserService extends BaseService {
     const contact = await this.contactRepository.findOne({ ownerId: req.id });
     contact.firstName = req.firstName;
     contact.lastName = req.lastName;
-    contact.phone = req.phone;
     contact.dateOfBirth = new Date(moment(req.dob, ["DD/MM/YYYY"]).format());
     contact.address = req.address;
     if (req.avatar) {
       contact.avatar = req.avatar;
     }
-    contact.save();
-    return contact;
+    return await contact.save();
   }
 
   async updateUserActive(req: any): Promise<UserEntity> {

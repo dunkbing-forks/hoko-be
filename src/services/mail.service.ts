@@ -44,7 +44,7 @@ export class MailService {
 
       const mailOptions = {
         from: `Hokolity Team <${process.env.EMAIL_COMPANY}>`,
-        to: user.contactInfo.email,
+        to: user.email,
         subject: "Request to reset password",
         html: "",
       };
@@ -88,7 +88,7 @@ export class MailService {
 
       const mailOptions = {
         from: `Hokolity Team <${process.env.EMAIL_COMPANY}>`,
-        to: user.contactInfo.email,
+        to: user.email,
         subject: "Request to reset password",
         html: "",
       };

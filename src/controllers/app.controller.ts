@@ -18,6 +18,7 @@ import { RefreshTokenGuard } from "../common/auth/refresh-token.guard";
 import * as CONSTANT from "../common/constants";
 import { PostsService } from "../services/post.service";
 import { BaseController } from "./base-controller";
+import {UserReqPayload} from "../dto/user.dto";
 
 interface IEmail {
   email: string;
@@ -31,6 +32,13 @@ export class AppController extends BaseController {
     private readonly postsService: PostsService
   ) {
     super();
+  }
+
+  @Get("/posts-news-feed")
+  async getPostsViral(@Req() req: Request, @Res() res: Response) {
+    const data = await this.postsService.getViralPosts();
+    console.log(data);
+    return res.status(HttpStatus.OK).send(this.toJson(data));
   }
 
   @Get("/forgot-password")
@@ -58,30 +66,30 @@ export class AppController extends BaseController {
     }
   }
 
-  @Post("google-auth/login")
-  async loginByGoogle(@Req() req: Request, @Res() res: Response) {
-    try {
-      const info = await this.authService.loginGoogle(req);
-      const secretData = {
-        jwtToken: info.accessToken,
-        refresh_token: info.refresh_token,
-      };
-      return res
-        .status(HttpStatus.ACCEPTED)
-        .cookie("token", secretData, {
-          sameSite: "strict",
-          path: "/",
-          maxAge: 1.5 * 60 * 60 * 1000,
-          expires: new Date(new Date().getTime() + CONSTANT.TOKEN_LIFE * 60000),
-          secure: true,
-          httpOnly: true,
-        })
-        .send(info.account);
-    } catch (error) {
-      res.send(error.response);
-      console.log("loginByGoogle\n", error);
-    }
-  }
+  // @Post("google-auth/login")
+  // async loginByGoogle(@Req() req: Request, @Res() res: Response) {
+  //   try {
+  //     const info = await this.authService.loginGoogle(req);
+  //     const secretData = {
+  //       jwtToken: info.accessToken,
+  //       refresh_token: info.refresh_token,
+  //     };
+  //     return res
+  //       .status(HttpStatus.ACCEPTED)
+  //       .cookie("token", secretData, {
+  //         sameSite: "strict",
+  //         path: "/",
+  //         maxAge: 1.5 * 60 * 60 * 1000,
+  //         expires: new Date(new Date().getTime() + CONSTANT.TOKEN_LIFE * 60000),
+  //         secure: true,
+  //         httpOnly: true,
+  //       })
+  //       .send(info.account);
+  //   } catch (error) {
+  //     res.send(error.response);
+  //     console.log("loginByGoogle\n", error);
+  //   }
+  // }
 
   @UseGuards(RefreshTokenGuard)
   @Post("/refresh-token")

@@ -6,18 +6,21 @@ import * as moment from "moment";
 import { JwtService } from "@nestjs/jwt";
 import { config } from "dotenv";
 import { Request } from "express";
+import {BaseService} from "./base.service";
 
 config();
 @Injectable()
-export class AuthService {
+export class AuthService extends BaseService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
     private mailService: MailService
-  ) {}
+  ) {
+    super();
+  }
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.getUserByName(username);
+  async validateUser(account: string, pass: string): Promise<any> {
+    const user = await this.usersService.getUserByName(account);
     const isLogin = user ? await bcrypt.compare(pass, user.password) : false;
     if (user && isLogin) {
       const { ...result } = user;
@@ -27,61 +30,79 @@ export class AuthService {
   }
 
   async login(request: Request) {
-    const user = await this.usersService.getUserByName(request.body.username);
-    // update refresh token
-    const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
-    if (!user.active) throw new UnauthorizedException();
-    return {
-      accessToken: this.jwtService.sign({
-        username: user.username,
-        role: user.role,
-        id: user.id,
-      }),
-      refresh_token: refreshJwtToken,
-      account: {
-        id: user.id,
-        role: user.role,
-        username: user.username,
-        profile: user.contactInfo,
-      },
-    };
-  }
+    try {
+      await this.startTransaction();
+      const user = await this.usersService.getUserByName(request.body.account);
+      // update refresh token
+      const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
+      if (!user.active) throw new UnauthorizedException();
 
-  async loginGoogle(request: Request) {
-    // get user if exist
-    let user = await this.usersService.getUserByName(request.body.email);
-    if (!user) {
-      // if not exist create new user with info of google account
-      const data = await this.usersService.insertUserByLoginGoogle(
-        request.body
-      );
-      user = await this.usersService.getUserByName(data.newUser.username);
-      const res_email = await this.mailService.sendGoogleEmail(
-        user,
-        data.randomPassword
-      );
-      console.log("loginGoogle-email", res_email);
+      await this.commitTransaction();
+
+      return {
+        accessToken: this.jwtService.sign({
+          username: user.username,
+          role: user.role,
+          id: user.id,
+        }),
+        refresh_token: refreshJwtToken,
+        account: {
+          id: user.id,
+          role: user.role,
+          username: user.username,
+          email: user.email,
+          phone: user.phone,
+          wallets: user.wallets.map(wallet => {
+            return {
+              id: wallet.walletAddress,
+            };
+          }),
+          profile: user.contactInfo,
+        },
+      };
+    } catch (error) {
+      await this.rollbackTransaction();
+      throw error;
+    } finally {
+      await this.release();
     }
-    // update refresh token
-
-    if (!user.active) throw new UnauthorizedException();
-
-    const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
-    return {
-      accessToken: this.jwtService.sign({
-        name: user.username,
-        role: user.role,
-        sub: user.id,
-      }),
-      refresh_token: refreshJwtToken,
-      account: {
-        id: user.id,
-        role: user.role,
-        username: user.username,
-        profile: user.contactInfo,
-      },
-    };
   }
+
+  // async loginGoogle(request: Request) {
+  //   // get user if exist
+  //   let user = await this.usersService.getUserByName(request.body.email);
+  //   if (!user) {
+  //     // if not exist create new user with info of google account
+  //     const data = await this.usersService.insertUserByLoginGoogle(
+  //       request.body
+  //     );
+  //     user = await this.usersService.getUserByName(data.newUser.username);
+  //     const res_email = await this.mailService.sendGoogleEmail(
+  //       user,
+  //       data.randomPassword
+  //     );
+  //     console.log("loginGoogle-email", res_email);
+  //   }
+  //   // update refresh token
+  //
+  //   if (!user.active) throw new UnauthorizedException();
+  //
+  //   const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
+  //   return {
+  //     accessToken: this.jwtService.sign({
+  //       name: user.username,
+  //       role: user.role,
+  //       sub: user.id,
+  //     }),
+  //     refresh_token: refreshJwtToken,
+  //     account: {
+  //       id: user.id,
+  //       role: user.role,
+  //       username: user.username,
+  //       profile: user.contactInfo,
+  //     },
+  //   };
+  // }
 
   async validateRefreshJwtToken(username: string, refreshToken: string) {
     const currentDate = new Date(moment().utc().format("YYYY/MM/DD HH:mm:ss"));

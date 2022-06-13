@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { CommentEntity } from "./comment.entity";
 
-@Entity("actions")
+@Entity("actions_comments")
 export class ActionCommentEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment", { name: "id", type: "int" })
   id: number;
