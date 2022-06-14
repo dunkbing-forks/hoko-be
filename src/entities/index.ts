@@ -6,6 +6,7 @@ import { MediaEntity } from "./media.entity";
 import { PostEntity } from "./post.entity";
 import { UserEntity } from "./user.entity";
 import { WalletEntity } from "./wallet.entity";
+import { ActionEntity } from "./action.entity";
 
 export const entities = [
   UserEntity,
@@ -16,4 +17,5 @@ export const entities = [
   ActionCommentEntity,
   WalletEntity,
   MediaEntity,
+  ActionEntity
 ];

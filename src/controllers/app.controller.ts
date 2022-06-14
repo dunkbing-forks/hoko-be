@@ -55,7 +55,7 @@ export class AppController extends BaseController {
     }
   }
 
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
   @Post("auth/login")
   async login(@Req() req: Request, @Res() res: Response) {
     try {

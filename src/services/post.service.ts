@@ -30,6 +30,7 @@ export class PostsService extends BaseService {
   }
 	
   async createPost(post: CreatePostDto): Promise<PostEntity> {
+		
     const postEntity = new PostEntity();
     postEntity.description = post.description;
     postEntity.content = post.content;

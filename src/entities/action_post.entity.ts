@@ -21,8 +21,8 @@ export class ActionPostEntity extends BaseEntity {
   @Column({ name: "post_id", type: "int" })
   postId: number;
 
-  @Column({ name: "action", type: "varchar" })
-  action: number;
+  @Column({ name: "action_id", type: "varchar" })
+  action_id: number;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

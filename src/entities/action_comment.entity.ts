@@ -21,8 +21,8 @@ export class ActionCommentEntity extends BaseEntity {
   @Column({ name: "comment_id", type: "int" })
   commentId: number;
 
-  @Column({ name: "action", type: "varchar" })
-  action: number;
+  @Column({ name: "action_id", type: "varchar" })
+  actionId: number;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
