@@ -1,4 +1,4 @@
-import { IsString, IsNumber } from "class-validator";
+import { IsString, IsNumber, IsOptional, IsArray,  } from "class-validator";
 import { Privacy } from "../entities/post.entity";
 import { MediaType } from "../common/types";
 
@@ -10,9 +10,6 @@ export class UpdatePostDto {
   readonly medias: MediaType[];
 
   @IsString()
-  readonly description: string;
-
-  @IsString()
   readonly privacy: Privacy;
 
   @IsNumber()
@@ -21,16 +18,15 @@ export class UpdatePostDto {
 
 export class CreatePostDto {
   @IsNumber()
+  @IsOptional()
   ownerId?: number;
 
   @IsString()
   readonly content: string;
 
-  @IsString()
-  readonly medias: MediaType[];
-
-  @IsString()
-  readonly description: string;
+  @IsArray()
+  @IsOptional()
+  readonly medias?: MediaType[];
 
   @IsString()
   readonly privacy: Privacy;

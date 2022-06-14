@@ -29,9 +29,6 @@ export class PostEntity extends BaseEntity {
   @Column({ name: "content", type: "text" })
   content: string;
 
-  @Column({ name: "description", type: "nvarchar", length: 255, default: "" })
-  description: string;
-
   @Column({ name: "active", type: "tinyint", default: 1 })
   active: boolean;
 

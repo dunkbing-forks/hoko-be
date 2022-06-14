@@ -8,10 +8,10 @@ import { JwtModule } from "@nestjs/jwt";
 import { config } from "dotenv";
 import { RefreshStrategy } from "../common/auth/refresh.strategy";
 import { MailModule } from "./mail.module";
+import { AuthController } from "../controllers/auth.controller";
 
 config();
 @Module({
-  //.register({ session: true })
   imports: [
     UserModule,
     PassportModule,
@@ -21,7 +21,9 @@ config();
       signOptions: { expiresIn: "5400s" },
     }),
   ],
+  controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy, RefreshStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
+

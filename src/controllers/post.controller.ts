@@ -12,7 +12,6 @@ import {
 } from "@nestjs/common";
 import { PostsService } from "../services/post.service";
 import { Response, Request } from "express";
-import { AuthService } from "../services/auth.service";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 import { ResponseForm } from "../common/types";
 import { BaseController } from "./base-controller";
@@ -24,7 +23,6 @@ import { UserReqPayload } from "../dto/user.dto";
 export class PostsController extends BaseController {
   constructor(
     private readonly postsService: PostsService,
-    private readonly authService: AuthService
   ) {
     super();
   }

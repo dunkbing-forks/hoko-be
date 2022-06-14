@@ -1,14 +1,15 @@
 import { WalletEntity } from "../entities/wallet.entity";
 import { ContactEntity } from "../entities/contact.entity";
 import { UserEntity } from "../entities/user.entity";
-import { HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { MoreThanOrEqual, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import * as randomToken from "rand-token";
 import * as moment from "moment";
 import * as CONSTANTS from "../common/constants";
 import * as bcrypt from "bcrypt";
 import { BaseService } from "./base.service";
+import { JwtService } from "@nestjs/jwt";
 
 const Web3 = require("web3");
 
@@ -48,7 +49,8 @@ export class UserService extends BaseService {
     @InjectRepository(ContactEntity)
     private readonly contactRepository: Repository<ContactEntity>,
     @InjectRepository(WalletEntity)
-    private readonly walletsRepository: Repository<WalletEntity>
+    private readonly walletsRepository: Repository<WalletEntity>,
+    private jwtService: JwtService,
   ) {
     super();
   }
@@ -214,26 +216,23 @@ export class UserService extends BaseService {
 
   async updateRefreshToken(userId: number): Promise<string> {
     const user = await this.userRepository.findOne(userId);
-    user.refreshToken = randomToken.generate(16);
-    user.refreshTokenExp = new Date(
-      moment()
-        .utc()
-        .add(CONSTANTS.TOKEN_LIFE, "minute")
-        .format("YYYY/MM/DD HH:mm:ss")
-    );
+    const refreshToken = this.jwtService.sign({
+      username: user.username,
+      role: user.role,
+      id: user.id,
+    });
+    user.hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await user.save();
-    return user.refreshToken;
+    return refreshToken;
   }
 
   async getUserWithRefreshToken(
     username: string,
     refreshToken: string,
-    currentDate: Date
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
-      username: username,
-      refreshToken: refreshToken,
-      refreshTokenExp: MoreThanOrEqual(currentDate),
+      username,
+      hashedRefreshToken: refreshToken,
     });
 
     if (!user) {

@@ -1,5 +1,5 @@
 import { MailService } from "./mail.service";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from "@nestjs/common";
 import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import * as moment from "moment";
@@ -7,6 +7,7 @@ import { JwtService } from "@nestjs/jwt";
 import { config } from "dotenv";
 import { Request } from "express";
 import {BaseService} from "./base.service";
+import { UserLoginReq } from "src/dto/user.dto";
 
 config();
 @Injectable()
@@ -29,43 +30,34 @@ export class AuthService extends BaseService {
     return null;
   }
 
-  async login(request: Request) {
-    try {
-      await this.startTransaction();
-      const user = await this.usersService.getUserByName(request.body.account);
-      // update refresh token
-      const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
-      if (!user.active) throw new UnauthorizedException();
+  async login(loginInfo: UserLoginReq) {
+    const user = await this.usersService.getUserByName(loginInfo.account);
+    if (!user) throw new NotFoundException("user not found");
+    if (!user.active) throw new UnauthorizedException();
+    // update refresh token
+    const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
 
-      await this.commitTransaction();
-
-      return {
-        accessToken: this.jwtService.sign({
-          username: user.username,
-          role: user.role,
-          id: user.id,
+    return {
+      accessToken: this.jwtService.sign({
+        username: user.username,
+        role: user.role,
+        id: user.id,
+      }),
+      refreshToken: refreshJwtToken,
+      account: {
+        id: user.id,
+        role: user.role,
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+        wallets: user.wallets.map(wallet => {
+          return {
+            id: wallet.walletAddress,
+          };
         }),
-        refresh_token: refreshJwtToken,
-        account: {
-          id: user.id,
-          role: user.role,
-          username: user.username,
-          email: user.email,
-          phone: user.phone,
-          wallets: user.wallets.map(wallet => {
-            return {
-              id: wallet.walletAddress,
-            };
-          }),
-          profile: user.contactInfo,
-        },
-      };
-    } catch (error) {
-      await this.rollbackTransaction();
-      throw error;
-    } finally {
-      await this.release();
-    }
+        profile: user.contactInfo,
+      },
+    };
   }
 
   // async loginGoogle(request: Request) {
@@ -104,14 +96,13 @@ export class AuthService extends BaseService {
   //   };
   // }
 
-  async validateRefreshJwtToken(username: string, refreshToken: string) {
-    const currentDate = new Date(moment().utc().format("YYYY/MM/DD HH:mm:ss"));
-    const user = await this.usersService.getUserWithRefreshToken(
-      username,
+  async validateRefreshJwtToken(user_id: number, refreshToken: string) {
+    const user = await this.usersService.getUserById(user_id);
+    const matched = await bcrypt.compare(
       refreshToken,
-      currentDate
+      user.hashedRefreshToken,
     );
-    return user;
+    return matched ? user : null;
   }
 
   async getRefreshToken(userId: number): Promise<string> {

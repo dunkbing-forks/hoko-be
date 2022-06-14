@@ -35,11 +35,8 @@ export class UserEntity extends BaseEntity {
 	@Column({name: "active", type: "tinyint", default: 1})
 	active: boolean;
 
-	@Column({nullable: true, name: "refreshtoken"})
-	refreshToken: string;
-
-	@Column({type: "datetime", nullable: true, name: "refreshtokenexp"})
-	refreshTokenExp: Date;
+	@Column({name: "hashed_refresh_token", nullable: true})
+	hashedRefreshToken: string;
 
 	@CreateDateColumn({name: "created_at", type: "timestamp"})
 	createdAt: Date;

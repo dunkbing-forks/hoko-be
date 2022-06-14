@@ -11,7 +11,6 @@ import { MediaEntity } from "../entities/media.entity";
 @Module({
   imports: [
     TypeOrmModule.forFeature([PostEntity, ActionPostEntity, MediaEntity]),
-    AuthModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],

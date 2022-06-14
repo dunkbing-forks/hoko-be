@@ -27,7 +27,6 @@ type ResponseUser = {
   role: number;
   active: boolean;
   refreshToken: string;
-  refreshTokenExp: Date;
   contactInfo: {
     id: number;
     firstName: string;
@@ -55,8 +54,7 @@ export class UserController {
         username: user.username,
         role: user.role,
         active: user.active,
-        refreshToken: user.refreshToken,
-        refreshTokenExp: user.refreshTokenExp,
+        refreshToken: user.hashedRefreshToken,
         contactInfo: {
           id: user.contactInfo.id,
           firstName: user.contactInfo.firstName,
@@ -92,8 +90,7 @@ export class UserController {
           username: user.username,
           role: user.role,
           active: user.active,
-          refreshToken: user.refreshToken,
-          refreshTokenExp: user.refreshTokenExp,
+          refreshToken: user.hashedRefreshToken,
           contactInfo: {
             id: user.contactInfo.id,
             firstName: user.contactInfo.firstName,
@@ -132,8 +129,7 @@ export class UserController {
       username: user.username,
       role: user.role,
       active: user.active,
-      refreshToken: user.refreshToken,
-      refreshTokenExp: user.refreshTokenExp,
+      refreshToken: user.hashedRefreshToken,
       contactInfo: {
         id: user.contactInfo.id,
         firstName: user.contactInfo.firstName,

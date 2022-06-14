@@ -12,12 +12,9 @@ const moment = require("moment");
 @Injectable()
 export class PostsService extends BaseService {
   constructor(
-		@InjectRepository(PostEntity)
-		private readonly postsRepository: Repository<PostEntity>,
-		@InjectRepository(ActionPostEntity)
-		private readonly actionsPostRepository: Repository<ActionPostEntity>,
-		@InjectRepository(MediaEntity)
-		private readonly mediaRepository: Repository<MediaEntity>
+    @InjectRepository(PostEntity) private readonly postsRepository: Repository<PostEntity>,
+    @InjectRepository(ActionPostEntity) private readonly actionsPostRepository: Repository<ActionPostEntity>,
+    @InjectRepository(MediaEntity) private readonly mediaRepository: Repository<MediaEntity>,
   ) {
     super();
   }
@@ -32,7 +29,6 @@ export class PostsService extends BaseService {
   async createPost(post: CreatePostDto): Promise<PostEntity> {
 		
     const postEntity = new PostEntity();
-    postEntity.description = post.description;
     postEntity.content = post.content;
 		
     postEntity.privacy = post.privacy;
@@ -61,7 +57,6 @@ export class PostsService extends BaseService {
     const currentPost = await this.postsRepository.findOne(id);
 		
     if (currentPost) {
-      currentPost.description = post.description;
       currentPost.content = post.content;
 			
       if (post.medias.length > 0) {

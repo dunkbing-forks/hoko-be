@@ -1,10 +1,12 @@
-import { IsString, IsNumber, IsBoolean } from "class-validator";
+import { IsString, IsNumber, IsBoolean, MinLength } from "class-validator";
 
 export class CreateUserDto {
   @IsString()
+  @MinLength(6, { message: "Username is too short" })
   readonly username: string;
 
   @IsString()
+  @MinLength(6, { message: "Password is too short" })
   readonly password: string;
 
   @IsNumber()
@@ -31,6 +33,7 @@ export class CreateUserDto {
 
 export class GetInformationDto {
   @IsString()
+  @MinLength(6, { message: "Username is too short" })
   readonly username: string;
 }
 
@@ -47,9 +50,11 @@ export class ChangePasswordDto {
   readonly userId: number;
 
   @IsString()
+  @MinLength(6, { message: "Password is too short" })
   readonly oldPassword: string;
 
   @IsString()
+  @MinLength(6, { message: "Password is too short" })
   readonly newPassword: string;
 }
 
@@ -89,5 +94,16 @@ export class UpdateInformationDto {
 
 export type UserReqPayload = {
   id: number
+  role?: number
   username: string
 }
+
+export class UserLoginReq {
+  @IsString()
+  @MinLength(6, { message: "Account is too short" })
+  readonly account: string;
+  @IsString()
+  @MinLength(6, { message: "Password is too short" })
+  readonly password: string;
+}
+

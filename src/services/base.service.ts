@@ -1,10 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { QueryRunner, getConnection, getRepository } from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { QueryRunner, getConnection } from 'typeorm';
 
 @Injectable()
 export class BaseService {
   protected queryRunner: QueryRunner;
-  // tslint:disable-next-line:no-empty
   constructor() {}
   public async startTransaction() {
     this.queryRunner = getConnection().createQueryRunner();

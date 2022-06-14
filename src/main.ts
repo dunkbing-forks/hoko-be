@@ -3,6 +3,7 @@ import { AppModule } from "./modules/app.module";
 import * as cookieParser from "cookie-parser";
 import { config } from "dotenv";
 import { AllExceptionsFilter } from "./common/middlewares/exception-filter";
+import { ValidationPipe } from "@nestjs/common";
 
 config();
 
@@ -14,6 +15,7 @@ async function bootstrap() {
   });
   app.setGlobalPrefix("api");
   app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe())
   app.useGlobalFilters(new AllExceptionsFilter());
   await app.listen(process.env.APP_PORT);
 }
