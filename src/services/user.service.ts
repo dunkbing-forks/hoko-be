@@ -50,7 +50,7 @@ export class UserService extends BaseService {
     private readonly contactRepository: Repository<ContactEntity>,
     @InjectRepository(WalletEntity)
     private readonly walletsRepository: Repository<WalletEntity>,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {
     super();
   }
@@ -228,7 +228,7 @@ export class UserService extends BaseService {
 
   async getUserWithRefreshToken(
     username: string,
-    refreshToken: string,
+    refreshToken: string
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       username,

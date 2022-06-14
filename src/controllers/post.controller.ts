@@ -21,9 +21,7 @@ import { UserReqPayload } from "../dto/user.dto";
 @UseGuards(JwtAuthGuard)
 @Controller("posts")
 export class PostsController extends BaseController {
-  constructor(
-    private readonly postsService: PostsService,
-  ) {
+  constructor(private readonly postsService: PostsService) {
     super();
   }
 
@@ -63,6 +61,8 @@ export class PostsController extends BaseController {
 
       return res.status(HttpStatus.BAD_REQUEST).send(response);
     }
-    return res.status(HttpStatus.OK).send(this.toJson(data, { message: "Update post success" }));
+    return res
+      .status(HttpStatus.OK)
+      .send(this.toJson(data, { message: "Update post success" }));
   }
 }

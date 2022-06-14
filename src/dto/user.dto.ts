@@ -93,10 +93,10 @@ export class UpdateInformationDto {
 }
 
 export type UserReqPayload = {
-  id: number
-  role?: number
-  username: string
-}
+  id: number;
+  role?: number;
+  username: string;
+};
 
 export class UserLoginReq {
   @IsString()
@@ -106,4 +106,3 @@ export class UserLoginReq {
   @MinLength(6, { message: "Password is too short" })
   readonly password: string;
 }
-

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { QueryRunner, getConnection } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { QueryRunner, getConnection } from "typeorm";
 
 @Injectable()
 export class BaseService {

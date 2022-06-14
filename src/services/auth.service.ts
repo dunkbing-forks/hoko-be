@@ -1,12 +1,17 @@
 import { MailService } from "./mail.service";
-import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  NotFoundException,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import * as moment from "moment";
 import { JwtService } from "@nestjs/jwt";
 import { config } from "dotenv";
 import { Request } from "express";
-import {BaseService} from "./base.service";
+import { BaseService } from "./base.service";
 import { UserLoginReq } from "src/dto/user.dto";
 
 config();
@@ -50,7 +55,7 @@ export class AuthService extends BaseService {
         username: user.username,
         email: user.email,
         phone: user.phone,
-        wallets: user.wallets.map(wallet => {
+        wallets: user.wallets.map((wallet) => {
           return {
             id: wallet.walletAddress,
           };
@@ -98,10 +103,7 @@ export class AuthService extends BaseService {
 
   async validateRefreshJwtToken(user_id: number, refreshToken: string) {
     const user = await this.usersService.getUserById(user_id);
-    const matched = await bcrypt.compare(
-      refreshToken,
-      user.hashedRefreshToken,
-    );
+    const matched = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
     return matched ? user : null;
   }
 

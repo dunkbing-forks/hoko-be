@@ -17,5 +17,5 @@ export const entities = [
   ActionCommentEntity,
   WalletEntity,
   MediaEntity,
-  ActionEntity
+  ActionEntity,
 ];

@@ -29,7 +29,7 @@ export class AuthController extends BaseController {
   constructor(
     private readonly authService: AuthService,
     private readonly mailService: MailService,
-    private readonly userService: UserService,
+    private readonly userService: UserService
   ) {
     super();
   }
@@ -83,7 +83,7 @@ export class AuthController extends BaseController {
   @Post("/refresh-token")
   async refreshJwtToken(
     @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: Response
   ) {
     try {
       const token = await this.authService.getJwtToken(req.body.id);
@@ -143,4 +143,3 @@ export class AuthController extends BaseController {
     }
   }
 }
-

@@ -15,7 +15,7 @@ async function bootstrap() {
   });
   app.setGlobalPrefix("api");
   app.use(cookieParser());
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
   await app.listen(process.env.APP_PORT);
 }

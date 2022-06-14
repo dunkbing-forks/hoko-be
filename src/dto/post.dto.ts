@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsArray,  } from "class-validator";
+import { IsString, IsNumber, IsOptional, IsArray } from "class-validator";
 import { Privacy } from "../entities/post.entity";
 import { MediaType } from "../common/types";
 

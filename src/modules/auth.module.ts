@@ -26,4 +26,3 @@ config();
   exports: [AuthService],
 })
 export class AuthModule {}
-
