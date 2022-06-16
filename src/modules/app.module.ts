@@ -7,11 +7,19 @@ import { config } from "dotenv";
 import { MailModule } from "./mail.module";
 import { PostsModule } from "./posts.module";
 import { DbModule } from "./db.module";
+import { ChatModule } from "./chat.module";
 
 config();
 
 @Module({
-  imports: [DbModule, AuthModule, MailModule, PostsModule, UserModule],
+  imports: [
+    DbModule,
+    AuthModule,
+    MailModule,
+    PostsModule,
+    UserModule,
+    ChatModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

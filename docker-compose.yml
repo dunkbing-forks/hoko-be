@@ -14,6 +14,19 @@ services:
   #     - 3306:3306
   #   expose:
   #     - 3306
+  soketi:
+    image: quay.io/soketi/soketi:0.34-16-debian
+    restart: always
+    environment:
+      DEFAULT_APP_ID: "1419288"
+      DEFAULT_APP_KEY: "25ffc95438e35357c167"
+      DEFAULT_APP_SECRET: "07c6ed0a7df866a0feb2"
+      DEFAULT_APP_MAX_CONNS: 20
+      DEFAULT_APP_ENABLE_CLIENT_MESSAGES: true
+    ports:
+      - 6001:6001
+    expose:
+      - 6001
   hokodity:
     # depends_on:
     #   - mysqldb
