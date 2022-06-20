@@ -1,3 +1,4 @@
+import { ChatMessageEntity } from './chat-message.entity';
 import { ActionCommentEntity } from "./action_comment.entity";
 import { ActionPostEntity } from "./action_post.entity";
 import { CommentEntity } from "./comment.entity";
@@ -22,4 +23,5 @@ export const entities = [
   ActionEntity,
   ChatGroupEntity,
   ChatGroupCategoryEntity,
+  ChatMessageEntity
 ];

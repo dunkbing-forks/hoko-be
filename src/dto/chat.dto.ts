@@ -1,8 +1,12 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, IsNumber } from "class-validator";
 
 export class SendMessageDto {
-  @IsString()
-  username: string;
   @IsNotEmpty()
   message: string;
+  @IsNumber()
+  channel: number;
+}
+
+export class PostChatGroupDto {
+  memberIds: number[];
 }

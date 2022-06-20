@@ -241,9 +241,13 @@ export class UserService extends BaseService {
     return user;
   }
 
-  async getUserById(userId: number): Promise<UserEntity> {
-    const user = this.userRepository.findOne(userId);
-    return user;
+  async getUserById(userId: number): Promise<any> {
+    return await this.userRepository
+      .createQueryBuilder("users")
+      .where("`users`.`id` = :id", { id: userId })
+      .leftJoinAndSelect("users.contactInfo", "contacts")
+      .leftJoinAndSelect("users.wallets", "wallets")
+      .getOne();
   }
 
   async updateUserInformation(req: any): Promise<ContactEntity> {

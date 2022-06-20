@@ -31,7 +31,7 @@ export class UserEntity extends BaseEntity {
     name: "email",
     unique: true,
     nullable: false,
-    type: "nvarchar",
+    type: "varchar",
     length: 100,
   })
   email: string;
@@ -40,7 +40,7 @@ export class UserEntity extends BaseEntity {
     name: "phone",
     unique: true,
     nullable: false,
-    type: "nvarchar",
+    type: "varchar",
     length: 20,
   })
   phone: string;
@@ -54,7 +54,7 @@ export class UserEntity extends BaseEntity {
   })
   password: string;
 
-  @Column({ name: "role", type: "int" })
+  @Column({ name: "role", type: "tinyint", default: 3 })
   role: number;
 
   @Column({ name: "active", type: "tinyint", default: 1 })
