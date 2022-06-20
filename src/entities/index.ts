@@ -7,6 +7,8 @@ import { PostEntity } from "./post.entity";
 import { UserEntity } from "./user.entity";
 import { WalletEntity } from "./wallet.entity";
 import { ActionEntity } from "./action.entity";
+import { ChatGroupEntity } from "./chat-group.entity";
+import { ChatGroupCategoryEntity } from "./chat-group-category.entity";
 
 export const entities = [
   UserEntity,
@@ -18,4 +20,6 @@ export const entities = [
   WalletEntity,
   MediaEntity,
   ActionEntity,
+  ChatGroupEntity,
+  ChatGroupCategoryEntity,
 ];
