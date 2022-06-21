@@ -14,7 +14,7 @@ import { JwtService } from "@nestjs/jwt";
 const Web3 = require("web3");
 
 interface IUser {
-  username: string;
+  username?: string;
   password: string;
   role?: number;
   active?: boolean;
@@ -22,7 +22,7 @@ interface IUser {
   lastName?: string;
   address?: string;
   email: string;
-  phone?: string;
+  phone: string;
   dateOfBirth?: string;
 }
 
@@ -279,10 +279,17 @@ export class UserService extends BaseService {
   async getUserByEmail(email: string) {
     const user = await this.userRepository
       .createQueryBuilder("users")
-      .leftJoinAndSelect("users.contactInfo", "contacts")
-      .where("contacts.email = :email", { email: email })
+      .where("users.email = :email", { email: email })
       .getOne();
 
+    return user;
+  }
+
+  async getUserByPhone(phone: string) {
+    const user = await this.userRepository
+      .createQueryBuilder("users")
+      .where("users.phone = :phone", { phone: phone })
+      .getOne();
     return user;
   }
 

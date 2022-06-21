@@ -50,6 +50,12 @@ export class ChatService extends BaseService {
     }
   }
 
+  async getGroupOfSignalBot(bot_id:number) {
+    return await this.groupChatRepository.findOne({
+      ownerId: bot_id
+    })
+  }
+
   async addGroupChat(
     ownerId: number,
     memberIds: number[],
