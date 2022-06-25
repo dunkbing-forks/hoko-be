@@ -11,6 +11,7 @@
     "linebreak-style": ["error", "unix"],
     "quotes": ["warn", "double"],
     "comma-style": ["warn", "last"],
+    "comma-dangle": ["warn", "always-multiline"],
     "semi": ["warn", "always"]
   }
 }
