@@ -9,4 +9,5 @@ export class SendMessageDto {
 
 export class PostChatGroupDto {
   memberIds: number[];
+  groupName: string;
 }

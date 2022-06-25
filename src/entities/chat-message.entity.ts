@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 
 import { ChatGroupEntity } from "./chat-group.entity";
+import {UserEntity} from "./user.entity";
 
 @Entity("chat_message")
 export class ChatMessageEntity extends BaseEntity {
@@ -19,10 +20,10 @@ export class ChatMessageEntity extends BaseEntity {
   @Column({ name: "content", type: "text" })
   content: string;
 
-  @Column({ name: "group-id", type: "int" })
+  @Column({ name: "group_id", type: "int" })
   chatGroupId: number;
 
-  @Column({ name: "ownerId", type: "int" })
+  @Column({ name: "owner_id", type: "int" })
   ownerId: number;
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
@@ -31,7 +32,14 @@ export class ChatMessageEntity extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.chatMessage,
+  )
+  @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
+  user: UserEntity;
+
   @ManyToOne(() => ChatGroupEntity, (chatGroup) => chatGroup.chatMessage)
-  @JoinColumn({ name: "group-id", referencedColumnName: "id" })
+  @JoinColumn({ name: "group_id", referencedColumnName: "id" })
   chatGroup: ChatGroupEntity;
 }

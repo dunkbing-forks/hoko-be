@@ -11,6 +11,7 @@ import {
 import { ContactEntity } from "./contact.entity";
 import { WalletEntity } from "./wallet.entity";
 import { PostEntity } from "./post.entity";
+import {ChatMessageEntity} from "./chat-message.entity";
 
 @Entity("users")
 export class UserEntity extends BaseEntity {
@@ -80,7 +81,16 @@ export class UserEntity extends BaseEntity {
   wallets: WalletEntity[];
 
   @OneToMany(() => PostEntity, (post) => post.user, {
-    cascade: true,
+    cascade: true
   })
   post: PostEntity[];
+
+  @OneToMany(
+    () => ChatMessageEntity,
+    (messages) => messages.user,
+    {
+      cascade: true,
+    },
+  )
+  chatMessage: ChatMessageEntity[];
 }

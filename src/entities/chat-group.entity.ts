@@ -16,6 +16,12 @@ import {
 import { ChatGroupCategoryEntity } from "./chat-group-category.entity";
 import { ChatMessageEntity } from "./chat-message.entity";
 
+export const chatGroupUserTable = {
+  name: "chat-groups_users",
+  chatGroupId: "chat-group_id",
+  userId: "user_id",
+};
+
 @Entity("chat_groups")
 export class ChatGroupEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -23,9 +29,6 @@ export class ChatGroupEntity extends BaseEntity {
 
   @Column({ name: "display-name" })
   displayName: string;
-
-  @Column({ name: "slug_name", unique: true })
-  slugName: string;
 
   @Column({ name: "display-image", nullable: true })
   displayImage: string;
@@ -42,9 +45,13 @@ export class ChatGroupEntity extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @OneToMany(() => ChatMessageEntity, (messages) => messages.chatGroup, {
-    cascade: true,
-  })
+  @OneToMany(
+    () => ChatMessageEntity,
+    (messages) => messages.chatGroup,
+    {
+      cascade: true,
+    },
+  )
   chatMessage: ChatMessageEntity[];
 
   @ManyToOne(
@@ -55,6 +62,16 @@ export class ChatGroupEntity extends BaseEntity {
   category: ChatGroupCategoryEntity;
 
   @ManyToMany(() => UserEntity)
-  @JoinTable()
+  @JoinTable({
+    name: chatGroupUserTable.name,
+    joinColumn: {
+      name: chatGroupUserTable.chatGroupId,
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: chatGroupUserTable.userId,
+      referencedColumnName: "id",
+    },
+  })
   users: UserEntity[];
 }

@@ -1,4 +1,3 @@
-import { ChatGroupEntity } from './../entities/chat-group.entity';
 import {
   Controller,
   Post,
@@ -7,8 +6,7 @@ import {
   HttpStatus,
   Req,
   UseGuards,
-  Get,
-  Param,
+  Get, HttpException,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { SendMessageDto, PostChatGroupDto } from "src/dto/chat.dto";
@@ -17,6 +15,7 @@ import { BaseController } from "./base-controller";
 import { UserReqPayload } from "../dto/user.dto";
 import { UserService } from "../services/user.service";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
+import {ChatGroupEntity} from "../entities/chat-group.entity";
 
 @Controller("message")
 export class ChatController extends BaseController {
@@ -30,13 +29,16 @@ export class ChatController extends BaseController {
   @Post("/bot-signal")
   async signal(@Req() req: Request, @Res() res: Response) {
     const bot = await this.userService.getUserByEmail("botsignal@gmail.com");
-    // check bot is exist
+    // check bot is existed
     const group = await this.chatService.getGroupOfSignalBot(bot.id);
 
     await this.chatService.addMessage(bot.id, {
       channel: group.id,
       message: req.body.message,
     });
+    return res.status(HttpStatus.OK).send(this.toJson({
+      message: "ok",
+    }));
   }
 
   @UseGuards(JwtAuthGuard)
@@ -49,7 +51,7 @@ export class ChatController extends BaseController {
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
     await this.chatService.addMessage(ownerId, data);
-    res
+    return res
       .status(HttpStatus.OK)
       .send(this.toJson({}, { message: "message sent" }));
   }
@@ -61,34 +63,24 @@ export class ChatController extends BaseController {
     @Res() res: Response,
     @Body() data: PostChatGroupDto
   ) {
-    let group = await this.chatService.checkGroupExist(data.memberIds);
-
-    if (group)
-      return res
-        .status(HttpStatus.OK)
-        .send(this.toJson(group, { message: "chat was created" }));
-
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
-    let displayName = "";
-    let slug_name = "";
 
-    const listMember = []
+    const usernames = await  Promise.all(data.memberIds.map(async (id) => {
+      const user = await this.userService.getUserById(id);
+      if (!user) {
+        throw new HttpException(`User ${id} not found`, HttpStatus.NOT_FOUND);
+      }
+      return user.username;
+    }));
+    const displayName = data.groupName ? data.groupName : usernames.join(", ");
 
-    for (const [index, memberId] of data.memberIds.entries()) {
-      const user = await this.userService.getUserById(memberId);
-      listMember.push(user)
-      displayName += `${user.wallets[0].walletAddress}${
-        index !== data.memberIds.length - 1 ? ", " : ""
-      }`;
-      slug_name += `${user.wallets[0].walletAddress}` + "_";
-    }
-    group = await this.chatService.addGroupChat(
+    const group = await this.chatService.addGroupChat(
       ownerId,
-      listMember,
+      data.memberIds,
       displayName,
-      slug_name
     );
+
     return res
       .status(HttpStatus.OK)
       .send(this.toJson(group, { message: "create chat success" }));
@@ -102,11 +94,11 @@ export class ChatController extends BaseController {
   ) {
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
-    const data = await this.chatService.getAllGroupOfUser(ownerId)
+    const data = await this.chatService.getAllGroupOfUser(ownerId);
 
     data.forEach((item: ChatGroupEntity) => {
-      delete item.users
-    })
+      delete item.users;
+    });
 
     return res
       .status(HttpStatus.OK)
