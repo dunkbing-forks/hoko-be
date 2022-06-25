@@ -50,7 +50,7 @@ export class ChatService extends BaseService {
     }
   }
 
-  async getGroupOfSignalBot(bot_id:number) {
+  async getGroupOfSignalBot(bot_id: number) {
     return await this.groupChatRepository.findOne({
       ownerId: bot_id,
     });
@@ -98,6 +98,7 @@ export class ChatService extends BaseService {
 
     return chatMessageEntity;
   }
+
   async getAllGroupOfUser(userId: number) {
     return await this.groupChatRepository
       .createQueryBuilder("groupChat")
