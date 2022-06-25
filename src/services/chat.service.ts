@@ -1,3 +1,5 @@
+import { ChatGroupEntity } from './../entities/chat-group.entity';
+import { UserEntity } from "./../entities/user.entity";
 import { ChatMessageEntity } from "./../entities/chat-message.entity";
 import { Injectable } from "@nestjs/common";
 import { config } from "dotenv";
@@ -6,7 +8,6 @@ import { SendMessageDto } from "src/dto/chat.dto";
 import { BaseService } from "./base.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ChatGroupEntity } from "../entities/chat-group.entity";
 
 config();
 
@@ -50,24 +51,37 @@ export class ChatService extends BaseService {
     }
   }
 
-  async getGroupOfSignalBot(bot_id:number) {
+  async getGroupOfSignalBot(bot_id: number) {
     return await this.groupChatRepository.findOne({
-      ownerId: bot_id
-    })
+      ownerId: bot_id,
+    });
   }
 
   async addGroupChat(
     ownerId: number,
-    memberIds: number[],
-    displayName: string
+    members: UserEntity[],
+    displayName: string,
+    slugName: string
   ) {
     try {
-      // add group chat
-      const chatGroupEntity = new ChatGroupEntity();
-      chatGroupEntity.userIds = `${memberIds}`;
-      chatGroupEntity.ownerId = ownerId;
-      chatGroupEntity.displayName = displayName;
-      return await chatGroupEntity.save();
+      const groups = await this.groupChatRepository.findOne({
+        slugName: slugName,
+      });
+
+      if (!groups) {
+        // add group chat
+        const chatGroupEntity = new ChatGroupEntity();
+        chatGroupEntity.ownerId = ownerId;
+        chatGroupEntity.displayName = displayName;
+        chatGroupEntity.slugName = slugName;
+
+        chatGroupEntity.users = members;
+        const data = await chatGroupEntity.save();
+
+        return await this.groupChatRepository.findOne(data.id);
+      }
+
+      return groups
     } catch (e) {
       console.log(e.message);
     }
@@ -98,5 +112,13 @@ export class ChatService extends BaseService {
     } finally {
       await this.release();
     }
+  }
+
+  async getAllGroupOfUser(userId: number) {
+    return await this.groupChatRepository
+    .createQueryBuilder("groupChat")
+    .leftJoinAndSelect("groupChat.users", "users")
+    .where("users.id = :userId", { userId: userId })
+    .getMany();
   }
 }

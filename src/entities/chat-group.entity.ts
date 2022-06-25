@@ -1,3 +1,4 @@
+import { UserEntity } from "./user.entity";
 import {
   Column,
   Entity,
@@ -8,6 +9,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 
 import { ChatGroupCategoryEntity } from "./chat-group-category.entity";
@@ -21,8 +24,8 @@ export class ChatGroupEntity extends BaseEntity {
   @Column({ name: "display-name" })
   displayName: string;
 
-  @Column({ name: "user-ids", type: "varchar" })
-  userIds: string;
+  @Column({ name: "slug_name", unique: true })
+  slugName: string;
 
   @Column({ name: "display-image", nullable: true })
   displayImage: string;
@@ -50,4 +53,8 @@ export class ChatGroupEntity extends BaseEntity {
   )
   @JoinColumn({ name: "category-id", referencedColumnName: "id" })
   category: ChatGroupCategoryEntity;
+
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  users: UserEntity[];
 }
