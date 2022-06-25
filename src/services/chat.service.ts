@@ -1,13 +1,13 @@
-import { ChatGroupEntity } from './../entities/chat-group.entity';
-import { UserEntity } from "./../entities/user.entity";
-import { ChatMessageEntity } from "./../entities/chat-message.entity";
-import { Injectable } from "@nestjs/common";
+import { ChatMessageEntity } from "../entities/chat-message.entity";
+import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
 import { config } from "dotenv";
 import * as Pusher from "pusher";
 import { SendMessageDto } from "src/dto/chat.dto";
 import { BaseService } from "./base.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { ChatGroupEntity } from "../entities/chat-group.entity";
+import {UserEntity} from "../entities/user.entity";
 
 config();
 
@@ -51,7 +51,7 @@ export class ChatService extends BaseService {
     }
   }
 
-  async getGroupOfSignalBot(bot_id: number) {
+  async getGroupOfSignalBot(bot_id:number) {
     return await this.groupChatRepository.findOne({
       ownerId: bot_id,
     });
@@ -81,44 +81,35 @@ export class ChatService extends BaseService {
         return await this.groupChatRepository.findOne(data.id);
       }
 
-      return groups
+      return groups;
     } catch (e) {
       console.log(e.message);
     }
   }
 
   async addMessage(ownerId: number, data: SendMessageDto) {
-    console.log(data);
-    try {
-      await this.startTransaction();
-      const chat = {
-        message: data.message,
-      };
-      await this.pusher.trigger(`chat_${data.channel}`, "message", chat);
-
-      const chatMessageEntity = new ChatMessageEntity();
-      chatMessageEntity.content = data.message;
-      chatMessageEntity.ownerId = ownerId;
-      chatMessageEntity.chatGroupId = data.channel;
-
-      await chatMessageEntity.save();
-
-      await this.commitTransaction();
-
-      return chatMessageEntity;
-    } catch (error) {
-      await this.rollbackTransaction();
-      throw error;
-    } finally {
-      await this.release();
+    const chatGroup = await this.groupChatRepository.findOne(data.channel);
+    if (!chatGroup) {
+      throw new HttpException(`Chat group ${data.channel} not found`, HttpStatus.NOT_FOUND);
     }
+    const chatMessageEntity = new ChatMessageEntity();
+    chatMessageEntity.content = data.message;
+    chatMessageEntity.ownerId = ownerId;
+    chatMessageEntity.chatGroupId = data.channel;
+    await chatMessageEntity.save();
+    const chat = {
+      message: data.message,
+    };
+    await this.pusher.trigger(`chat_${data.channel}`, "message", chat);
+
+    return chatMessageEntity;
   }
 
   async getAllGroupOfUser(userId: number) {
     return await this.groupChatRepository
-    .createQueryBuilder("groupChat")
-    .leftJoinAndSelect("groupChat.users", "users")
-    .where("users.id = :userId", { userId: userId })
-    .getMany();
+      .createQueryBuilder("groupChat")
+      .leftJoinAndSelect("groupChat.users", "users")
+      .where("users.id = :userId", { userId: userId })
+      .getMany();
   }
 }
