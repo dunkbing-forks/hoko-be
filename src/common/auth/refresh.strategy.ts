@@ -17,7 +17,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
           const secretData = request?.cookies["token"];
           const token = request.headers["refresh-token"];
           const refreshToken = secretData?.jwtToken || token;
-          console.log(refreshToken);
           return refreshToken;
         },
       ]),
@@ -41,6 +40,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
       throw new BadRequestException("Invalid refresh token");
     }
     return {
+      id: user.id,
       username: user.username,
       sub: user.id,
     };

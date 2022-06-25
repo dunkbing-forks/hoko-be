@@ -85,27 +85,24 @@ export class AuthController extends BaseController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
-    try {
-      const token = await this.authService.getJwtToken(req.body.id);
-      const refreshToken = await this.authService.getRefreshToken(req.body.id);
-      const secretData = {
-        jwtToken: token,
-        refreshToken,
-      };
-      res
-        .status(HttpStatus.ACCEPTED)
-        .cookie("token", secretData, {
-          sameSite: "strict",
-          path: "/",
-          maxAge: 1.5 * 60 * 60 * 1000,
-          expires: new Date(new Date().getTime() + CONSTANT.TOKEN_LIFE * 60000),
-          secure: true,
-          httpOnly: true,
-        })
-        .send(this.toJson(secretData));
-    } catch (error) {
-      console.log("refreshJwtToken:\n", error);
-    }
+    const user = req.user as UserReqPayload;
+    const token = await this.authService.getJwtToken(user.id);
+    const refreshToken = await this.authService.getRefreshToken(user.id);
+    const secretData = {
+      jwtToken: token,
+      refreshToken,
+    };
+    res
+      .status(HttpStatus.ACCEPTED)
+      .cookie("token", secretData, {
+        sameSite: "strict",
+        path: "/",
+        maxAge: 1.5 * 60 * 60 * 1000,
+        expires: new Date(new Date().getTime() + CONSTANT.TOKEN_LIFE * 60000),
+        secure: true,
+        httpOnly: true,
+      })
+      .send(this.toJson(secretData));
   }
 
   @UseGuards(JwtAuthGuard)

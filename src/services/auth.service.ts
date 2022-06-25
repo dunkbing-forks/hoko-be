@@ -114,7 +114,10 @@ export class AuthService extends BaseService {
 
   async getJwtToken(userId: number): Promise<string> {
     const user = await this.usersService.getUserById(userId);
-    const jwtToken = this.jwtService.signAsync({
+    if (!user) {
+      throw new NotFoundException("user not found");
+    }
+    const jwtToken = await this.jwtService.signAsync({
       name: user.username,
       role: user.role,
       sub: user.id,
