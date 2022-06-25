@@ -8,6 +8,7 @@ import { MailModule } from "./mail.module";
 import { PostsModule } from "./posts.module";
 import { DbModule } from "./db.module";
 import { ChatModule } from "./chat.module";
+import { ChatService } from "src/services/chat.service";
 
 config();
 

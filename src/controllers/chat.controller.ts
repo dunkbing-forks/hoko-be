@@ -15,7 +15,6 @@ import { UserReqPayload } from "../dto/user.dto";
 import { UserService } from "../services/user.service";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 
-@UseGuards(JwtAuthGuard)
 @Controller("message")
 export class ChatController extends BaseController {
   constructor(
@@ -25,6 +24,19 @@ export class ChatController extends BaseController {
     super();
   }
 
+  @Post("/bot-signal")
+  async signal(@Req() req: Request, @Res() res: Response) {
+    const bot = await this.userService.getUserByEmail("botsignal@gmail.com")
+    // check bot is exist
+    const group = await this.chatService.getGroupOfSignalBot(bot.id)
+    
+    await this.chatService.addMessage(bot.id, {
+      channel: group.id,
+      message: req.body.message,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   async postMessage(
     @Req() req: Request,
@@ -39,6 +51,7 @@ export class ChatController extends BaseController {
       .send(this.toJson({}, { message: "message sent" }));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post("/group")
   async postGroupChat(
     @Req() req: Request,
