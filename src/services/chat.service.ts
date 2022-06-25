@@ -1,4 +1,4 @@
-import { ChatGroupEntity } from './../entities/chat-group.entity';
+import { ChatGroupEntity } from "./../entities/chat-group.entity";
 import { UserEntity } from "./../entities/user.entity";
 import { ChatMessageEntity } from "./../entities/chat-message.entity";
 import { Injectable } from "@nestjs/common";
@@ -81,7 +81,7 @@ export class ChatService extends BaseService {
         return await this.groupChatRepository.findOne(data.id);
       }
 
-      return groups
+      return groups;
     } catch (e) {
       console.log(e.message);
     }
@@ -116,9 +116,24 @@ export class ChatService extends BaseService {
 
   async getAllGroupOfUser(userId: number) {
     return await this.groupChatRepository
-    .createQueryBuilder("groupChat")
-    .leftJoinAndSelect("groupChat.users", "users")
-    .where("users.id = :userId", { userId: userId })
-    .getMany();
+      .createQueryBuilder("groupChat")
+      .leftJoinAndSelect("groupChat.users", "users")
+      .where("users.id = :userId", { userId: userId })
+      .getMany();
+  }
+
+  async checkWalletInChatGroup(walletAddress: string, group_id: number) {
+    return await this.groupChatRepository
+      .createQueryBuilder("groupChat")
+      .where("groupChat.slug_name like :name", { name: `%${walletAddress}%` })
+      .andWhere("groupChat.id = :group_id", { group_id: group_id})
+      .getOne();
+  }
+
+  async getAllMessageOfGroup(groupId: number) {
+    return await this.chatMessageRepository
+      .createQueryBuilder("chatMessage")
+      .where("chatMessage.group_id = :group_id", { group_id: groupId })
+      .getMany();
   }
 }

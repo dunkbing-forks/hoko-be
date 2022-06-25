@@ -9,6 +9,7 @@ import {
   UseGuards,
   Get,
   Param,
+  HttpException,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { SendMessageDto, PostChatGroupDto } from "src/dto/chat.dto";
@@ -111,5 +112,29 @@ export class ChatController extends BaseController {
     return res
       .status(HttpStatus.OK)
       .send(this.toJson(data, { message: "" }));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("group/:group_id/")
+  async getMessageChatOfGroup(
+    @Param("group_id") group_id: number,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const user = req.user as UserReqPayload;
+    const ownerId = user.id;
+
+    const userEntity = await this.userService.getUserById(ownerId);
+
+    const currentChat = await this.chatService.checkWalletInChatGroup(userEntity.wallets[0].walletAddress, group_id)
+
+    if (!currentChat) {
+      throw new HttpException("chat not found", HttpStatus.NOT_FOUND);
+    }
+
+    const messages = await this.chatService.getAllMessageOfGroup(group_id)
+      return res
+      .status(HttpStatus.OK)
+      .send(this.toJson(messages, { message: "" }));
   }
 }

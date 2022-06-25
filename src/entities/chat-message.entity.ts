@@ -19,7 +19,7 @@ export class ChatMessageEntity extends BaseEntity {
   @Column({ name: "content", type: "text" })
   content: string;
 
-  @Column({ name: "group-id", type: "int" })
+  @Column({ name: "group_id", type: "int" })
   chatGroupId: number;
 
   @Column({ name: "ownerId", type: "int" })
@@ -32,6 +32,6 @@ export class ChatMessageEntity extends BaseEntity {
   updatedAt: Date;
 
   @ManyToOne(() => ChatGroupEntity, (chatGroup) => chatGroup.chatMessage)
-  @JoinColumn({ name: "group-id", referencedColumnName: "id" })
+  @JoinColumn({ name: "group_id", referencedColumnName: "id" })
   chatGroup: ChatGroupEntity;
 }
