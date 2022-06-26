@@ -2,6 +2,17 @@ import {WalletEntity} from "../entities/wallet.entity";
 import {Body, Controller, Get, HttpStatus, Param, Post, Put, Res} from "@nestjs/common";
 import {UserService} from "../services/user.service";
 import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Res,
+} from "@nestjs/common";
+import { UserService } from "../services/user.service";
+import {
   ActiveUser,
   ChangePasswordDto,
   CreateUserDto,
@@ -10,8 +21,8 @@ import {
   UpdateInformationDto,
   UserResponse,
 } from "../dto/user.dto";
-import {Response} from "express";
-import {BaseController} from "./base-controller";
+import { Response } from "express";
+import { BaseController } from "./base-controller";
 
 @Controller("users")
 export class UserController extends BaseController {
@@ -41,7 +52,9 @@ export class UserController extends BaseController {
   ): Promise<any> {
     console.log("ok");
     const user = await this.userService.getUserById(id);
-    return res.status(HttpStatus.OK).send(this.toJson(user));
+    return res
+      .status(HttpStatus.OK)
+      .send(this.toJson(this.userService.transform(user)));
   }
 
   @Post("/create")

@@ -1,12 +1,15 @@
-import {ChatMessageEntity} from "../entities/chat-message.entity";
-import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
-import {config} from "dotenv";
+import { ChatMessageEntity } from "../entities/chat-message.entity";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { config } from "dotenv";
 import * as Pusher from "pusher";
-import {SendMessageDto} from "src/dto/chat.dto";
-import {BaseService} from "./base.service";
-import {InjectRepository} from "@nestjs/typeorm";
-import {getConnection, Repository} from "typeorm";
-import {ChatGroupEntity, chatGroupUserTable} from "../entities/chat-group.entity";
+import { SendMessageDto } from "src/dto/chat.dto";
+import { BaseService } from "./base.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { getConnection, Repository } from "typeorm";
+import {
+  ChatGroupEntity,
+  chatGroupUserTable,
+} from "../entities/chat-group.entity";
 
 config();
 
@@ -59,7 +62,7 @@ export class ChatService extends BaseService {
   async addGroupChat(
     ownerId: number,
     memberIds: number[],
-    displayName: string,
+    displayName: string
   ) {
     const chatGroupEntity = new ChatGroupEntity();
     chatGroupEntity.ownerId = ownerId;
@@ -71,10 +74,12 @@ export class ChatService extends BaseService {
       .createQueryBuilder()
       .insert()
       .into(chatGroupUserTable.name)
-      .values(memberIds.map((id) => ({
-        [chatGroupUserTable.chatGroupId]: chatGroupEntity.id,
-        [chatGroupUserTable.userId]: id,
-      })))
+      .values(
+        memberIds.map((id) => ({
+          [chatGroupUserTable.chatGroupId]: chatGroupEntity.id,
+          [chatGroupUserTable.userId]: id,
+        }))
+      )
       .execute();
 
     return chatGroupEntity;
@@ -83,7 +88,10 @@ export class ChatService extends BaseService {
   async addMessage(ownerId: number, data: SendMessageDto) {
     const chatGroup = await this.groupChatRepository.findOne(data.channel);
     if (!chatGroup) {
-      throw new HttpException(`Chat group ${data.channel} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `Chat group ${data.channel} not found`,
+        HttpStatus.NOT_FOUND
+      );
     }
     console.log(data);
     const chatMessageEntity = new ChatMessageEntity();

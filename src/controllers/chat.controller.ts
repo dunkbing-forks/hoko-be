@@ -6,7 +6,8 @@ import {
   HttpStatus,
   Req,
   UseGuards,
-  Get, HttpException,
+  Get,
+  HttpException,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { SendMessageDto, PostChatGroupDto } from "src/dto/chat.dto";
@@ -15,7 +16,7 @@ import { BaseController } from "./base-controller";
 import { UserReqPayload } from "../dto/user.dto";
 import { UserService } from "../services/user.service";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
-import {ChatGroupEntity} from "../entities/chat-group.entity";
+import { ChatGroupEntity } from "../entities/chat-group.entity";
 
 @Controller("message")
 export class ChatController extends BaseController {
@@ -36,9 +37,11 @@ export class ChatController extends BaseController {
       channel: group.id,
       message: req.body.message,
     });
-    return res.status(HttpStatus.OK).send(this.toJson({
-      message: "ok",
-    }));
+    return res.status(HttpStatus.OK).send(
+      this.toJson({
+        message: "ok",
+      })
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -66,19 +69,21 @@ export class ChatController extends BaseController {
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
 
-    const usernames = await  Promise.all(data.memberIds.map(async (id) => {
-      const user = await this.userService.getUserById(id);
-      if (!user) {
-        throw new HttpException(`User ${id} not found`, HttpStatus.NOT_FOUND);
-      }
-      return user.username;
-    }));
+    const usernames = await Promise.all(
+      data.memberIds.map(async (id) => {
+        const user = await this.userService.getUserById(id);
+        if (!user) {
+          throw new HttpException(`User ${id} not found`, HttpStatus.NOT_FOUND);
+        }
+        return user.username;
+      })
+    );
     const displayName = data.groupName ? data.groupName : usernames.join(", ");
 
     const group = await this.chatService.addGroupChat(
       ownerId,
       data.memberIds,
-      displayName,
+      displayName
     );
 
     return res
@@ -88,10 +93,7 @@ export class ChatController extends BaseController {
 
   @UseGuards(JwtAuthGuard)
   @Get("/groups")
-  async getGroupChatOfOwner(
-    @Req() req: Request,
-    @Res() res: Response
-  ) {
+  async getGroupChatOfOwner(@Req() req: Request, @Res() res: Response) {
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
     const data = await this.chatService.getAllGroupOfUser(ownerId);
@@ -100,8 +102,6 @@ export class ChatController extends BaseController {
       delete item.users;
     });
 
-    return res
-      .status(HttpStatus.OK)
-      .send(this.toJson(data, { message: "" }));
+    return res.status(HttpStatus.OK).send(this.toJson(data, { message: "" }));
   }
 }
