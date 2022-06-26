@@ -2,7 +2,7 @@ import { WalletEntity } from "../entities/wallet.entity";
 import {
   Body,
   Controller,
-  Get,
+  Get, HttpException,
   HttpStatus,
   Param,
   Post,
@@ -34,12 +34,12 @@ export class UserController extends BaseController {
     return this.toJson(users);
   }
 
-  @Get("/:search")
+  @Get("/search/:username")
   async searchUserByName(
     @Res() res: Response,
-    @Param("search") username: string
+    @Param("username") username: string
   ): Promise<any> {
-    const users = await this.userService.searchUserByName(username);
+    const users = await this.userService.searchByUsername(username);
     return res.status(HttpStatus.OK).send(this.toJson(users));
   }
 
@@ -48,8 +48,10 @@ export class UserController extends BaseController {
     @Param("id") id: number,
     @Res() res: Response
   ): Promise<any> {
-    console.log("ok");
     const user = await this.userService.getUserById(id);
+    if (!user) {
+      throw new HttpException(`User ${id} not found`, HttpStatus.NOT_FOUND);
+    }
     return res
       .status(HttpStatus.OK)
       .send(this.toJson(this.userService.transform(user)));

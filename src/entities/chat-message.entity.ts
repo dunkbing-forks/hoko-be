@@ -9,10 +9,10 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { ChatGroupEntity } from "./chat-group.entity";
+import { ChatChannelEntity } from "./chat-channel.entity";
 import { UserEntity } from "./user.entity";
 
-@Entity("chat_message")
+@Entity("chat_messages")
 export class ChatMessageEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
@@ -20,8 +20,8 @@ export class ChatMessageEntity extends BaseEntity {
   @Column({ name: "content", type: "text" })
   content: string;
 
-  @Column({ name: "group_id", type: "int" })
-  chatGroupId: number;
+  @Column({ name: "channel_id", type: "int" })
+  channelId: number;
 
   @Column({ name: "owner_id", type: "int" })
   ownerId: number;
@@ -36,7 +36,7 @@ export class ChatMessageEntity extends BaseEntity {
   @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
   user: UserEntity;
 
-  @ManyToOne(() => ChatGroupEntity, (chatGroup) => chatGroup.chatMessage)
-  @JoinColumn({ name: "group_id", referencedColumnName: "id" })
-  chatGroup: ChatGroupEntity;
+  @ManyToOne(() => ChatChannelEntity, (chatGroup) => chatGroup.chatMessage)
+  @JoinColumn({ name: "channel_id", referencedColumnName: "id" })
+  chatGroup: ChatChannelEntity;
 }

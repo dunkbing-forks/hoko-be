@@ -7,9 +7,9 @@ import { BaseService } from "./base.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getConnection, Repository } from "typeorm";
 import {
-  ChatGroupEntity,
-  chatGroupUserTable,
-} from "../entities/chat-group.entity";
+  ChatChannelEntity,
+  chatChannelUserTable,
+} from "../entities/chat-channel.entity";
 
 config();
 
@@ -17,8 +17,8 @@ config();
 export class ChatService extends BaseService {
   pusher: Pusher;
   constructor(
-    @InjectRepository(ChatGroupEntity)
-    private readonly groupChatRepository: Repository<ChatGroupEntity>,
+    @InjectRepository(ChatChannelEntity)
+    private readonly channelRepository: Repository<ChatChannelEntity>,
     @InjectRepository(ChatMessageEntity)
     private readonly chatMessageRepository: Repository<ChatMessageEntity>
   ) {
@@ -34,14 +34,14 @@ export class ChatService extends BaseService {
 
   async checkGroupExist(memberIds: number[]) {
     try {
-      let group = await this.groupChatRepository.findOne({
+      let group = await this.channelRepository.findOne({
         where: {
           userIds: `${memberIds}`,
         },
       });
 
       if (!group) {
-        group = await this.groupChatRepository.findOne({
+        group = await this.channelRepository.findOne({
           where: {
             userIds: `${memberIds.reverse()}`,
           },
@@ -54,7 +54,7 @@ export class ChatService extends BaseService {
   }
 
   async getGroupOfSignalBot(bot_id: number) {
-    return await this.groupChatRepository.findOne({
+    return await this.channelRepository.findOne({
       ownerId: bot_id,
     });
   }
@@ -64,7 +64,7 @@ export class ChatService extends BaseService {
     memberIds: number[],
     displayName: string
   ) {
-    const chatGroupEntity = new ChatGroupEntity();
+    const chatGroupEntity = new ChatChannelEntity();
     chatGroupEntity.ownerId = ownerId;
     chatGroupEntity.displayName = displayName;
     await chatGroupEntity.save();
@@ -73,11 +73,11 @@ export class ChatService extends BaseService {
     await getConnection()
       .createQueryBuilder()
       .insert()
-      .into(chatGroupUserTable.name)
+      .into(chatChannelUserTable.name)
       .values(
         memberIds.map((id) => ({
-          [chatGroupUserTable.chatGroupId]: chatGroupEntity.id,
-          [chatGroupUserTable.userId]: id,
+          [chatChannelUserTable.chatChannelId]: chatGroupEntity.id,
+          [chatChannelUserTable.userId]: id,
         }))
       )
       .execute();
@@ -85,19 +85,22 @@ export class ChatService extends BaseService {
     return chatGroupEntity;
   }
 
+  async getChannel(channelId: number) {
+    return await this.channelRepository.findOne(channelId);
+  }
+
   async addMessage(ownerId: number, data: SendMessageDto) {
-    const chatGroup = await this.groupChatRepository.findOne(data.channel);
+    const chatGroup = await this.channelRepository.findOne(data.channel);
     if (!chatGroup) {
       throw new HttpException(
         `Chat group ${data.channel} not found`,
         HttpStatus.NOT_FOUND
       );
     }
-    console.log(data);
     const chatMessageEntity = new ChatMessageEntity();
     chatMessageEntity.content = data.message;
     chatMessageEntity.ownerId = ownerId;
-    chatMessageEntity.chatGroupId = data.channel;
+    chatMessageEntity.channelId = data.channel;
     await chatMessageEntity.save();
     const chat = {
       message: data.message,
@@ -108,10 +111,25 @@ export class ChatService extends BaseService {
   }
 
   async getAllGroupOfUser(userId: number) {
-    return await this.groupChatRepository
+    return await this.channelRepository
       .createQueryBuilder("groupChat")
       .leftJoinAndSelect("groupChat.users", "users")
       .where("users.id = :userId", { userId: userId })
       .getMany();
+  }
+
+  async getChannelMessages(channelId: number, take = 10, page = 0) {
+    const skip = take * page;
+    const [result, total] = await this.chatMessageRepository.findAndCount({
+      where: { channelId },
+      take,
+      skip,
+    });
+    return {
+      items: result,
+      totalPages: Math.ceil(total/10),
+      total,
+      currentPage: page,
+    };
   }
 }

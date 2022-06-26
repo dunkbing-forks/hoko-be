@@ -13,17 +13,17 @@ import {
   JoinTable,
 } from "typeorm";
 
-import { ChatGroupCategoryEntity } from "./chat-group-category.entity";
+import { ChatChannelCategoryEntity } from "./chat-channel-category.entity";
 import { ChatMessageEntity } from "./chat-message.entity";
 
-export const chatGroupUserTable = {
-  name: "chat-groups_users",
-  chatGroupId: "chat-group_id",
+export const chatChannelUserTable = {
+  name: "chat_channels-users",
+  chatChannelId: "chat_channel_id",
   userId: "user_id",
 };
 
-@Entity("chat_groups")
-export class ChatGroupEntity extends BaseEntity {
+@Entity("chat_channels")
+export class ChatChannelEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -51,21 +51,21 @@ export class ChatGroupEntity extends BaseEntity {
   chatMessage: ChatMessageEntity[];
 
   @ManyToOne(
-    () => ChatGroupCategoryEntity,
+    () => ChatChannelCategoryEntity,
     (chatGroupCategory) => chatGroupCategory.chatGroups
   )
   @JoinColumn({ name: "category-id", referencedColumnName: "id" })
-  category: ChatGroupCategoryEntity;
+  category: ChatChannelCategoryEntity;
 
   @ManyToMany(() => UserEntity)
   @JoinTable({
-    name: chatGroupUserTable.name,
+    name: chatChannelUserTable.name,
     joinColumn: {
-      name: chatGroupUserTable.chatGroupId,
+      name: chatChannelUserTable.chatChannelId,
       referencedColumnName: "id",
     },
     inverseJoinColumn: {
-      name: chatGroupUserTable.userId,
+      name: chatChannelUserTable.userId,
       referencedColumnName: "id",
     },
   })

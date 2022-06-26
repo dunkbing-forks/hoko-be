@@ -58,12 +58,12 @@ export class UserService extends BaseService {
 
   public transform(user: any): any {
     // return super.transform(obj);
+    // if (!user) return null;
     return {
       id: user.id,
       username: user.username,
       role: user.role,
       active: user.active,
-      refreshToken: user.hashedRefreshToken,
       contactInfo: {
         id: user.contactInfo.id,
         firstName: user.contactInfo.firstName,
@@ -75,7 +75,7 @@ export class UserService extends BaseService {
         avatar: user.contactInfo.avatar,
         ownerId: user.contactInfo.ownerId,
       },
-      wallets: user.wallets.map((wallet: WalletEntity) => {
+      wallets: user.wallets?.map((wallet: WalletEntity) => {
         return {
           id: wallet.id,
           walletAddress: wallet.walletAddress,
@@ -126,15 +126,18 @@ export class UserService extends BaseService {
     return user;
   }
 
-  async searchUserByName(username: string): Promise<UserResponse[]> {
+  async searchByUsername(username: string): Promise<UserResponse[]> {
     const users = await this.userRepository
       .createQueryBuilder("users")
       .where("username like :name", { name: `%${username}%` })
       .andWhere("role != 1")
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .getMany();
+    if (users?.length) {
+      return [];
+    }
 
-    return this.transform(users);
+    return users.map(this.transform);
   }
 
   async insertUser(user: IUser): Promise<UserEntity> {

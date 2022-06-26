@@ -8,10 +8,10 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { ChatGroupEntity } from "./chat-group.entity";
+import { ChatChannelEntity } from "./chat-channel.entity";
 
-@Entity("chat_groups_categories")
-export class ChatGroupCategoryEntity extends BaseEntity {
+@Entity("chat_channel_categories")
+export class ChatChannelCategoryEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -21,8 +21,8 @@ export class ChatGroupCategoryEntity extends BaseEntity {
   @Column({ name: "display-image", type: "varchar", length: 255 })
   displayImage: string;
 
-  @OneToMany(() => ChatGroupEntity, (chatGroup) => chatGroup.category)
-  chatGroups: ChatGroupEntity[];
+  @OneToMany(() => ChatChannelEntity, (chatGroup) => chatGroup.category)
+  chatGroups: ChatChannelEntity[];
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
