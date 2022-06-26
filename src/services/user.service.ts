@@ -1,15 +1,16 @@
-import { WalletEntity } from "../entities/wallet.entity";
-import { ContactEntity } from "../entities/contact.entity";
-import { UserEntity } from "../entities/user.entity";
-import { HttpStatus, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import {WalletEntity} from "../entities/wallet.entity";
+import {ContactEntity} from "../entities/contact.entity";
+import {UserEntity} from "../entities/user.entity";
+import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
 import * as randomToken from "rand-token";
 import * as moment from "moment";
 import * as CONSTANTS from "../common/constants";
 import * as bcrypt from "bcrypt";
-import { BaseService } from "./base.service";
-import { JwtService } from "@nestjs/jwt";
+import {BaseService} from "./base.service";
+import {JwtService} from "@nestjs/jwt";
+import {UserResponse} from "../dto/user.dto";
 
 const Web3 = require("web3");
 
@@ -55,17 +56,48 @@ export class UserService extends BaseService {
     super();
   }
 
+  public transform(user: any): any {
+    // return super.transform(obj);
+    return {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      active: user.active,
+      refreshToken: user.hashedRefreshToken,
+      contactInfo: {
+        id: user.contactInfo.id,
+        firstName: user.contactInfo.firstName,
+        lastName: user.contactInfo.lastName,
+        email: user.email,
+        phone: user.phone,
+        dateOfBirth: user.contactInfo.dateOfBirth,
+        address: user.contactInfo.address,
+        avatar: user.contactInfo.avatar,
+        ownerId: user.contactInfo.ownerId,
+      },
+      wallets: user.wallets.map((wallet: WalletEntity) => {
+        return {
+          id: wallet.id,
+          walletAddress: wallet.walletAddress,
+          ownerId: wallet.ownerId,
+        };
+      }),
+    };
+  }
+
   async getUsers(): Promise<UserEntity[]> {
     return this.userRepository.find();
   }
 
-  async getAllUsers(): Promise<UserEntity[]> {
-    return this.userRepository
+  async getAllUsers(): Promise<UserResponse[]> {
+    const users = await this.userRepository
       .createQueryBuilder("users")
       .where("role != 1")
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .leftJoinAndSelect("users.wallets", "wallets")
       .getMany();
+
+    return users.map(this.transform);
   }
 
   async getUserByName(account: string): Promise<UserEntity> {
@@ -94,13 +126,15 @@ export class UserService extends BaseService {
     return user;
   }
 
-  async searchUserByName(username: string): Promise<UserEntity[]> {
-    return this.userRepository
+  async searchUserByName(username: string): Promise<UserResponse[]> {
+    const users = await this.userRepository
       .createQueryBuilder("users")
       .where("username like :name", { name: `%${username}%` })
       .andWhere("role != 1")
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .getMany();
+
+    return this.transform(users);
   }
 
   async insertUser(user: IUser): Promise<UserEntity> {
@@ -151,27 +185,28 @@ export class UserService extends BaseService {
   }
 
   async changePassword(data: ChangePassword): Promise<any> {
-    const user = await this.getUserById(data.userId);
+    const user = await this.userRepository.findOne(data.userId);
+    if (!user) {
+      throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+    }
+
     const isVerifyPassword = user
       ? (await bcrypt.compare(data.oldPassword, user.password)) &&
         !(await bcrypt.compare(data.newPassword, user.password))
       : false;
-    if (isVerifyPassword) {
-      user.password = await bcrypt.hash(
-        data.newPassword,
-        CONSTANTS.ROUND_HASH_PASSWORD.ROUND
-      );
-      await user.save();
-
-      return {
-        status: HttpStatus.OK,
-        message: "Change Password Successful",
-      };
+    if (!isVerifyPassword) {
+      throw new HttpException("Password Was Duplicate Or Wrong", HttpStatus.BAD_REQUEST);
     }
 
+    user.password = await bcrypt.hash(
+      data.newPassword,
+      CONSTANTS.ROUND_HASH_PASSWORD.ROUND
+    );
+    await user.save();
+
     return {
-      status: HttpStatus.UNPROCESSABLE_ENTITY,
-      message: "Password Was Duplicate Or Wrong",
+      status: HttpStatus.OK,
+      message: "Change Password Successful",
     };
   }
 
@@ -241,10 +276,10 @@ export class UserService extends BaseService {
     return user;
   }
 
-  async getUserById(userId: number): Promise<any> {
+  async getUserById(userId: number): Promise<UserEntity> {
     return await this.userRepository
       .createQueryBuilder("users")
-      .where("`users`.`id` = :id", { id: userId })
+      .where("`users`.`id` = :id", {id: userId})
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .leftJoinAndSelect("users.wallets", "wallets")
       .getOne();
@@ -265,14 +300,14 @@ export class UserService extends BaseService {
   async updateUserActive(req: any): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ id: req.id });
     user.active = req.active;
-    user.save();
+    await user.save();
     return user;
   }
 
   async updateUserRole(req: any): Promise<UserEntity> {
     const user = await this.userRepository.findOne({ id: req.roleId });
     user.role = req.roleValue;
-    user.save();
+    await user.save();
     return user;
   }
 
