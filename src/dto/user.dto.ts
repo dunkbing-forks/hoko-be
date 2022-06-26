@@ -106,3 +106,24 @@ export class UserLoginReq {
   @MinLength(6, { message: "Password is too short" })
   readonly password: string;
 }
+
+export type UserResponse = {
+  id: number;
+  username: string;
+  role: number;
+  active: boolean;
+  refreshToken: string;
+  contactInfo: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    dateOfBirth: Date;
+    address: string;
+    avatar: string;
+    ownerId: number;
+  };
+  wallets: any[];
+};
+

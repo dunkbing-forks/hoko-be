@@ -23,6 +23,10 @@ export class BaseService {
     await this.queryRunner.release();
   }
 
+  protected transform<T>(obj: T) {
+    return obj;
+  }
+
   public async saveData(value: any) {
     return await this.queryRunner.manager.save(value);
   }

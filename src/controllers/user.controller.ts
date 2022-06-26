@@ -1,155 +1,47 @@
-import { WalletEntity } from "../entities/wallet.entity";
+import {WalletEntity} from "../entities/wallet.entity";
+import {Body, Controller, Get, HttpStatus, Param, Post, Put, Res} from "@nestjs/common";
+import {UserService} from "../services/user.service";
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Put,
-  Res,
-  Param,
-  HttpStatus,
-} from "@nestjs/common";
-import { UserEntity } from "../entities/user.entity";
-import { UserService } from "../services/user.service";
-import { CreateUserDto } from "../dto/user.dto";
-import {
-  GetInformationDto,
-  UpdateInformationDto,
-  ChangePasswordDto,
   ActiveUser,
+  ChangePasswordDto,
+  CreateUserDto,
+  GetInformationDto,
   RoleUser,
+  UpdateInformationDto,
+  UserResponse,
 } from "../dto/user.dto";
-import { Response } from "express";
-
-type ResponseUser = {
-  id: number;
-  username: string;
-  role: number;
-  active: boolean;
-  refreshToken: string;
-  contactInfo: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    dateOfBirth: Date;
-    address: string;
-    avatar: string;
-    ownerId: number;
-  };
-  wallets: any[];
-};
+import {Response} from "express";
+import {BaseController} from "./base-controller";
 
 @Controller("users")
-export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @Get("/")
-  async getAllUsers(): Promise<ResponseUser[]> {
-    const data = await this.userService.getAllUsers();
-    return data.map((user: UserEntity): ResponseUser => {
-      return {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        active: user.active,
-        refreshToken: user.hashedRefreshToken,
-        contactInfo: {
-          id: user.contactInfo.id,
-          firstName: user.contactInfo.firstName,
-          lastName: user.contactInfo.lastName,
-          email: user.email,
-          phone: user.phone,
-          dateOfBirth: user.contactInfo.dateOfBirth,
-          address: user.contactInfo.address,
-          avatar: user.contactInfo.avatar,
-          ownerId: user.contactInfo.ownerId,
-        },
-        wallets: user.wallets.map((wallet: WalletEntity) => {
-          return {
-            id: wallet.id,
-            walletAddress: wallet.walletAddress,
-            ownerId: wallet.ownerId,
-          };
-        }),
-      };
-    });
+export class UserController extends BaseController {
+  constructor(private readonly userService: UserService) {
+    super();
   }
 
-  @Get("/:search/")
+  @Get("/")
+  async getAllUsers(): Promise<UserResponse[]> {
+    const users = await this.userService.getAllUsers();
+    return this.toJson(users);
+  }
+
+  @Get("/:search")
   async searchUserByName(
     @Res() res: Response,
     @Param("search") username: string
   ): Promise<any> {
-    try {
-      const data = await this.userService.searchUserByName(username);
-      const response = data.map((user: UserEntity): ResponseUser => {
-        return {
-          id: user.id,
-          username: user.username,
-          role: user.role,
-          active: user.active,
-          refreshToken: user.hashedRefreshToken,
-          contactInfo: {
-            id: user.contactInfo.id,
-            firstName: user.contactInfo.firstName,
-            lastName: user.contactInfo.lastName,
-            email: user.email,
-            phone: user.phone,
-            dateOfBirth: user.contactInfo.dateOfBirth,
-            address: user.contactInfo.address,
-            avatar: user.contactInfo.avatar,
-            ownerId: user.contactInfo.ownerId,
-          },
-          wallets: user.wallets.map((wallet: WalletEntity) => {
-            return {
-              id: wallet.id,
-              walletAddress: wallet.walletAddress,
-              ownerId: wallet.ownerId,
-            };
-          }),
-        };
-      });
-      return res.status(HttpStatus.OK).send(response);
-    } catch (error) {
-      return res.status(HttpStatus.BAD_REQUEST).send(error.message);
-    }
+    const users = await this.userService.searchUserByName(username);
+    return res.status(HttpStatus.OK).send(this.toJson(users));
   }
 
-  @Get("/:id/")
+  @Get("/:id")
   async getUserById(
     @Param("id") id: number,
     @Res() res: Response
   ): Promise<any> {
     console.log("ok");
     const user = await this.userService.getUserById(id);
-    const response = {
-      id: user.id,
-      username: user.username,
-      role: user.role,
-      active: user.active,
-      refreshToken: user.hashedRefreshToken,
-      contactInfo: {
-        id: user.contactInfo.id,
-        firstName: user.contactInfo.firstName,
-        lastName: user.contactInfo.lastName,
-        email: user.email,
-        phone: user.phone,
-        dateOfBirth: user.contactInfo.dateOfBirth,
-        address: user.contactInfo.address,
-        avatar: user.contactInfo.avatar,
-        ownerId: user.contactInfo.ownerId,
-      },
-      wallets: user.wallets.map((wallet: WalletEntity) => {
-        return {
-          id: wallet.id,
-          walletAddress: wallet.walletAddress,
-          ownerId: wallet.ownerId,
-        };
-      }),
-    };
-    return res.status(HttpStatus.OK).send(response);
+    return res.status(HttpStatus.OK).send(this.toJson(user));
   }
 
   @Post("/create")
@@ -196,27 +88,21 @@ export class UserController {
   }
 
   @Put("/update-active")
-  async updateActive(@Body() request: ActiveUser): Promise<unknown> {
-    try {
-      const user = await this.userService.updateUserActive(request);
-      return user;
-    } catch (error) {
-      return {
-        message: "update fail...!",
-      };
-    }
+  async updateActive(
+    @Body() data: ActiveUser,
+    @Res() res: Response,
+  ): Promise<unknown> {
+    const user = await this.userService.updateUserActive(data);
+    return res.send(this.toJson(user));
   }
 
   @Put("/update-role")
-  async updateRole(@Body() request: RoleUser): Promise<unknown> {
-    try {
-      const user = await this.userService.updateUserRole(request);
-      return user;
-    } catch (error) {
-      return {
-        message: "update fail...!",
-      };
-    }
+  async updateRole(
+    @Body() request: RoleUser,
+    @Res() res: Response,
+  ): Promise<unknown> {
+    const user = await this.userService.updateUserRole(request);
+    return res.send(this.toJson(user));
   }
 
   @Put("change-password")
