@@ -45,13 +45,9 @@ export class ChatGroupEntity extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @OneToMany(
-    () => ChatMessageEntity,
-    (messages) => messages.chatGroup,
-    {
-      cascade: true,
-    },
-  )
+  @OneToMany(() => ChatMessageEntity, (messages) => messages.chatGroup, {
+    cascade: true,
+  })
   chatMessage: ChatMessageEntity[];
 
   @ManyToOne(
