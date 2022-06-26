@@ -286,6 +286,7 @@ export class UserService extends BaseService {
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .leftJoinAndSelect("users.wallets", "wallets")
       .getOne();
+    return this.transform(user);
   }
 
   async updateUserInformation(req: any): Promise<ContactEntity> {
