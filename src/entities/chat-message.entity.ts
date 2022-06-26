@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 
 import { ChatGroupEntity } from "./chat-group.entity";
-import {UserEntity} from "./user.entity";
+import { UserEntity } from "./user.entity";
 
 @Entity("chat_message")
 export class ChatMessageEntity extends BaseEntity {
@@ -32,10 +32,7 @@ export class ChatMessageEntity extends BaseEntity {
   @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
   updatedAt: Date;
 
-  @ManyToOne(
-    () => UserEntity,
-    (user) => user.chatMessage,
-  )
+  @ManyToOne(() => UserEntity, (user) => user.chatMessage)
   @JoinColumn({ name: "owner_id", referencedColumnName: "id" })
   user: UserEntity;
 

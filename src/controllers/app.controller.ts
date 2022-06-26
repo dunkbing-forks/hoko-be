@@ -1,13 +1,6 @@
 import { UserService } from "../services/user.service";
 import { MailService } from "../services/mail.service";
-import {
-  Controller,
-  Get,
-  Req,
-  Res,
-  HttpStatus,
-  Query,
-} from "@nestjs/common";
+import { Controller, Get, Req, Res, HttpStatus, Query } from "@nestjs/common";
 import { Response, Request } from "express";
 import { PostsService } from "../services/post.service";
 import { BaseController } from "./base-controller";
@@ -21,7 +14,7 @@ export class AppController extends BaseController {
   constructor(
     private readonly mailService: MailService,
     private readonly userService: UserService,
-    private readonly postsService: PostsService,
+    private readonly postsService: PostsService
   ) {
     super();
   }

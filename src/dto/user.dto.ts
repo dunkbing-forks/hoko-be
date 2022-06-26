@@ -126,4 +126,3 @@ export type UserResponse = {
   };
   wallets: any[];
 };
-

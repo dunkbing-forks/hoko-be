@@ -1,16 +1,16 @@
-import {WalletEntity} from "../entities/wallet.entity";
-import {ContactEntity} from "../entities/contact.entity";
-import {UserEntity} from "../entities/user.entity";
-import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
+import { WalletEntity } from "../entities/wallet.entity";
+import { ContactEntity } from "../entities/contact.entity";
+import { UserEntity } from "../entities/user.entity";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import * as randomToken from "rand-token";
 import * as moment from "moment";
 import * as CONSTANTS from "../common/constants";
 import * as bcrypt from "bcrypt";
-import {BaseService} from "./base.service";
-import {JwtService} from "@nestjs/jwt";
-import {UserResponse} from "../dto/user.dto";
+import { BaseService } from "./base.service";
+import { JwtService } from "@nestjs/jwt";
+import { UserResponse } from "../dto/user.dto";
 
 const Web3 = require("web3");
 
@@ -195,7 +195,10 @@ export class UserService extends BaseService {
         !(await bcrypt.compare(data.newPassword, user.password))
       : false;
     if (!isVerifyPassword) {
-      throw new HttpException("Password Was Duplicate Or Wrong", HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        "Password Was Duplicate Or Wrong",
+        HttpStatus.BAD_REQUEST
+      );
     }
 
     user.password = await bcrypt.hash(
@@ -279,7 +282,7 @@ export class UserService extends BaseService {
   async getUserById(userId: number): Promise<UserEntity> {
     return await this.userRepository
       .createQueryBuilder("users")
-      .where("`users`.`id` = :id", {id: userId})
+      .where("`users`.`id` = :id", { id: userId })
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .leftJoinAndSelect("users.wallets", "wallets")
       .getOne();
