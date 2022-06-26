@@ -1,4 +1,6 @@
-import { WalletEntity } from "../entities/wallet.entity";
+import {WalletEntity} from "../entities/wallet.entity";
+import {Body, Controller, Get, HttpStatus, Param, Post, Put, Res} from "@nestjs/common";
+import {UserService} from "../services/user.service";
 import {
   Body,
   Controller,
@@ -101,7 +103,7 @@ export class UserController extends BaseController {
   @Put("/update-active")
   async updateActive(
     @Body() data: ActiveUser,
-    @Res() res: Response
+    @Res() res: Response,
   ): Promise<unknown> {
     const user = await this.userService.updateUserActive(data);
     return res.send(this.toJson(user));
@@ -110,7 +112,7 @@ export class UserController extends BaseController {
   @Put("/update-role")
   async updateRole(
     @Body() request: RoleUser,
-    @Res() res: Response
+    @Res() res: Response,
   ): Promise<unknown> {
     const user = await this.userService.updateUserRole(request);
     return res.send(this.toJson(user));
