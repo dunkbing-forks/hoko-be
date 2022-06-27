@@ -101,10 +101,8 @@ export type UserReqPayload = {
 
 export class UserLoginReq {
   @IsString()
-  @MinLength(6, { message: "Account is too short" })
-  readonly account: string;
+  readonly username: string;
   @IsString()
-  @MinLength(6, { message: "Password is too short" })
   readonly password: string;
 }
 

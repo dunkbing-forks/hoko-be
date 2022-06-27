@@ -1,3 +1,4 @@
+
 import { MailService } from "./mail.service";
 import {
   Injectable,
@@ -26,7 +27,7 @@ export class AuthService extends BaseService {
   }
 
   async validateUser(account: string, pass: string): Promise<any> {
-    const user = await this.usersService.getUserByName(account);
+    const user = await this.usersService.getUserByPhone(account);
     const isLogin = user ? await bcrypt.compare(pass, user.password) : false;
     if (user && isLogin) {
       const { ...result } = user;
@@ -36,7 +37,7 @@ export class AuthService extends BaseService {
   }
 
   async login(loginInfo: UserLoginReq) {
-    const user = await this.usersService.getUserByName(loginInfo.account);
+    const user = await this.usersService.getUserByName(loginInfo.username);
     if (!user) throw new NotFoundException("user not found");
     if (!user.active) throw new UnauthorizedException();
     // update refresh token

@@ -45,7 +45,7 @@ M6_v2 = -1001640215187  # AI M6v2
 
 def copy_to_channel(client, message):
     try:
-        url = "http://localhost:3001/api/message/bot-signal"
+        url = "http://localhost:3001/api/chat/bot-signal"
         bot_id = 0
         if message.chat.id == M1:
             bot_id = 1
