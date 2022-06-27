@@ -102,10 +102,8 @@ export class ChatService extends BaseService {
     chatMessageEntity.ownerId = ownerId;
     chatMessageEntity.channelId = data.channel;
     await chatMessageEntity.save();
-    const chat = {
-      message: data.message,
-    };
-    await this.pusher.trigger(`chat_${data.channel}`, "message", chat);
+
+    await this.pusher.trigger(`chat_${data.channel}`, "message", chatMessageEntity);
 
     return chatMessageEntity;
   }
@@ -122,11 +120,12 @@ export class ChatService extends BaseService {
     const skip = take * page;
     const [result, total] = await this.chatMessageRepository.findAndCount({
       where: { channelId },
+      order: { createdAt: "DESC" },
       take,
       skip,
     });
     return {
-      items: result,
+      items: result.reverse(),
       totalPages: Math.ceil(total/10),
       total,
       currentPage: page,

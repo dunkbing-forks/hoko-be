@@ -48,7 +48,6 @@ export class AuthController extends BaseController {
     }
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post("/login")
   async login(@Body() loginInfo: UserLoginReq, @Res() res: Response) {
     const info = await this.authService.login(loginInfo);

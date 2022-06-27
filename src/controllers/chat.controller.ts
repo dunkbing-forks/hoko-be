@@ -99,10 +99,10 @@ export class ChatController extends BaseController {
   ) {
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
-    await this.chatService.addMessage(ownerId, data);
+    const message = await this.chatService.addMessage(ownerId, data);
     return res
       .status(HttpStatus.OK)
-      .send(this.toJson({ message: data.message, channel: data.channel }, { message: "message sent" }));
+      .send(this.toJson(message, { message: "message sent" }));
   }
 
   @UseGuards(JwtAuthGuard)
