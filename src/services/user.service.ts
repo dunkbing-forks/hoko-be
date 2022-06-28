@@ -133,7 +133,7 @@ export class UserService extends BaseService {
       .andWhere("role != 1")
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .getMany();
-    if (users?.length) {
+    if (!users.length) {
       return [];
     }
 
