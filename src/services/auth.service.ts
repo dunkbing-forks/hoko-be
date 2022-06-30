@@ -48,7 +48,7 @@ export class AuthService extends BaseService {
         username: user.username,
         role: user.role,
         id: user.id,
-      }),
+      }, {secret: process.env.JWT_SIGN_SECRET, expiresIn: "1h"}),
       refreshToken: refreshJwtToken,
       account: {
         id: user.id,
@@ -118,11 +118,11 @@ export class AuthService extends BaseService {
     if (!user) {
       throw new NotFoundException("user not found");
     }
-    const jwtToken = await this.jwtService.signAsync({
-      name: user.username,
+    const jwtToken = this.jwtService.sign({
+      username: user.username,
       role: user.role,
-      sub: user.id,
-    });
+      id: user.id,
+    }, { secret: process.env.JWT_SIGN_SECRET, expiresIn: "1h" });
     return jwtToken;
   }
 

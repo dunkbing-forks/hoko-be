@@ -261,7 +261,7 @@ export class UserService extends BaseService {
       username: user.username,
       role: user.role,
       id: user.id,
-    });
+    }, { expiresIn: "7 days" });
     user.hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await user.save();
     return refreshToken;
