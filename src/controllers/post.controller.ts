@@ -18,20 +18,27 @@ import { BaseController } from "./base-controller";
 import { UpdatePostDto, CreatePostDto } from "../dto/post.dto";
 import { UserReqPayload } from "../dto/user.dto";
 
-@UseGuards(JwtAuthGuard)
 @Controller("posts")
 export class PostsController extends BaseController {
   constructor(private readonly postsService: PostsService) {
     super();
   }
 
-  @Get("/")
+  @UseGuards(JwtAuthGuard)
+  @Get("/current-user")
   async getPostsByUser(@Req() req: Request, @Res() res: Response) {
     const user = req.user as UserReqPayload;
     const data = await this.postsService.getPostByUserId(user.id);
     return res.status(HttpStatus.OK).send(this.toJson(data));
   }
 
+  @Get("/")
+  async getPosts(@Res() res: Response) {
+    const data = await this.postsService.getPosts();
+    return res.status(HttpStatus.OK).send(this.toJson(data));
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post("/")
   async createPost(
     @Req() req: Request,
@@ -45,6 +52,7 @@ export class PostsController extends BaseController {
     return res.status(HttpStatus.OK).send(this.toJson(data));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(":id")
   async updatePost(
     @Param("id") id: number,

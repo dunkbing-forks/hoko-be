@@ -22,11 +22,22 @@ export class PostsService extends BaseService {
     super();
   }
 
-  async getPosts(): Promise<PostEntity[]> {
-    return this.postsRepository
-      .createQueryBuilder("posts")
-      .where("posts.active = :active", { active: true })
-      .getMany();
+  async getPosts(take = 10, page = 0) {
+    const skip = page * take;
+    const [result, total] = await this.postsRepository
+      .findAndCount({
+        where: { active: true },
+        order: { updatedAt: "DESC" },
+        take,
+        skip,
+      });
+
+    return {
+      items: result,
+      totalPages: Math.ceil(total/10),
+      total,
+      currentPage: page,
+    };
   }
 
   async createPost(post: CreatePostDto): Promise<PostEntity> {
@@ -94,12 +105,21 @@ export class PostsService extends BaseService {
     return this.postsRepository.save(post);
   }
 
-  async getPostByUserId(userId: number): Promise<PostEntity[]> {
-    return this.postsRepository
-      .createQueryBuilder("posts")
-      .where("posts.ownerId = :userId", { userId })
-      .andWhere("active = :active", { active: true })
-      .getMany();
+  async getPostByUserId(userId: number, take = 10, page = 0) {
+    const skip = page * take;
+    const [result, count] = await this.postsRepository
+      .findAndCount({
+        where: { ownerId: userId, active: true },
+        order: { updatedAt: "DESC" },
+        take,
+        skip,
+      });
+    return {
+      items: result,
+      totalPages: Math.ceil(count/10),
+      total: count,
+      currentPage: page,
+    };
   }
 
   async getTop5Posts(): Promise<PostEntity[]> {
