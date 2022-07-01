@@ -1,12 +1,13 @@
-import { WalletEntity } from "../entities/wallet.entity";
-import { ContactEntity } from "../entities/contact.entity";
 import { Module } from "@nestjs/common";
-import { UserController } from "../controllers/user.controller";
-import { UserService } from "../services/user.service";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserEntity } from "../entities/user.entity";
 import { JwtModule } from "@nestjs/jwt";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "dotenv";
+
+import { WalletEntity } from "@entities/wallet.entity";
+import { ContactEntity } from "@entities/contact.entity";
+import { UserController } from "@controllers/user.controller";
+import { UserService } from "@services/user.service";
+import { UserEntity } from "@entities/user.entity";
 
 config();
 

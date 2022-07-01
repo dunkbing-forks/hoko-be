@@ -1,4 +1,3 @@
-import { WalletEntity } from "../entities/wallet.entity";
 import {
   Body,
   Controller,
@@ -10,7 +9,9 @@ import {
   Put,
   Res,
 } from "@nestjs/common";
-import { UserService } from "../services/user.service";
+import { Response } from "express";
+import { WalletEntity } from "@entities/wallet.entity";
+import { UserService } from "@services/user.service";
 import {
   ActiveUser,
   ChangePasswordDto,
@@ -19,8 +20,7 @@ import {
   RoleUser,
   UpdateInformationDto,
   UserResponse,
-} from "../dtos/user.dto";
-import { Response } from "express";
+} from "@dtos/user.dto";
 import { BaseController } from "./base-controller";
 
 @Controller("users")

@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { PostEntity } from "../entities/post.entity";
-import { ActionPostEntity } from "../entities/action_post.entity";
-import { CreatePostDto, UpdatePostDto } from "../dtos/post.dto";
-import { MediaEntity } from "../entities/media.entity";
-import { BaseService } from "./base.service";
+import * as moment from "moment";
 
-const moment = require("moment");
+import { ActionPostEntity } from "@entities/action_post.entity";
+import { MediaEntity } from "@entities/media.entity";
+import { PostEntity } from "@entities/post.entity";
+import { CreatePostDto, UpdatePostDto } from "@dtos/post.dto";
+import { BaseService } from "./base.service";
 
 @Injectable()
 export class PostsService extends BaseService {

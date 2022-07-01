@@ -1,6 +1,5 @@
 import { UserModule } from "./users.module";
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
-import { AppController } from "../controllers/app.controller";
 import { AppService } from "../services/app.service";
 import { AuthModule } from "./auth.module";
 import { config } from "dotenv";
@@ -21,7 +20,6 @@ config();
     UserModule,
     ChatModule,
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {

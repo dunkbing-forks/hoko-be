@@ -1,16 +1,17 @@
-import { WalletEntity } from "../entities/wallet.entity";
-import { ContactEntity } from "../entities/contact.entity";
-import { UserEntity } from "../entities/user.entity";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import * as randomToken from "rand-token";
-import * as moment from "moment";
-import * as CONSTANTS from "../common/constants";
 import * as bcrypt from "bcrypt";
+import * as moment from "moment";
+
+import * as CONSTANTS from "@common/constants";
+import { WalletEntity } from "@entities/wallet.entity";
+import { ContactEntity } from "@entities/contact.entity";
+import { UserEntity } from "@entities/user.entity";
+import { UserResponse } from "@dtos/user.dto";
 import { BaseService } from "./base.service";
-import { JwtService } from "@nestjs/jwt";
-import { UserResponse } from "../dtos/user.dto";
 
 const Web3 = require("web3");
 

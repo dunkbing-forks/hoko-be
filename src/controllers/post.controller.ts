@@ -12,11 +12,10 @@ import {
 } from "@nestjs/common";
 import { PostsService } from "../services/post.service";
 import { Response, Request } from "express";
-import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
-import { ResponseForm } from "../common/types";
+import { JwtAuthGuard } from "@common/auth/jwt-auth.guard";
 import { BaseController } from "./base-controller";
-import { UpdatePostDto, CreatePostDto } from "../dtos/post.dto";
-import { UserReqPayload } from "../dtos/user.dto";
+import { UpdatePostDto, CreatePostDto } from "@dtos/post.dto";
+import { UserReqPayload } from "@dtos/user.dto";
 
 @Controller("posts")
 export class PostsController extends BaseController {

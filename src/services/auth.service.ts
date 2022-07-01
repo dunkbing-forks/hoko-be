@@ -1,15 +1,16 @@
-import { MailService } from "./mail.service";
 import {
   Injectable,
   UnauthorizedException,
   NotFoundException,
 } from "@nestjs/common";
-import { UserService } from "./user.service";
-import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
 import { config } from "dotenv";
+
+import { UserLoginReq } from "@dtos/user.dto";
+import { MailService } from "./mail.service";
+import { UserService } from "./user.service";
 import { BaseService } from "./base.service";
-import { UserLoginReq } from "@/dtos/user.dto";
 
 config();
 @Injectable()

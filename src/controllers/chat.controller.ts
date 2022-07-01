@@ -11,13 +11,13 @@ import {
   Param,
 } from "@nestjs/common";
 import { Request, Response } from "express";
-import { SendMessageDto, PostChatGroupDto } from "@/dtos/chat.dto";
-import { ChatService } from "../services/chat.service";
+import { ChatService } from "@services/chat.service";
 import { BaseController } from "./base-controller";
-import { UserReqPayload } from "../dtos/user.dto";
-import { UserService } from "../services/user.service";
-import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
-import { ChatChannelEntity } from "../entities/chat-channel.entity";
+import { SendMessageDto, PostChatGroupDto } from "@dtos/chat.dto";
+import { UserReqPayload } from "@dtos/user.dto";
+import { UserService } from "@services/user.service";
+import { JwtAuthGuard } from "@common/auth/jwt-auth.guard";
+import { ChatChannelEntity } from "@entities/chat-channel.entity";
 
 @Controller("chat")
 export class ChatController extends BaseController {

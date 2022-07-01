@@ -1,9 +1,10 @@
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./modules/app.module";
+import { ValidationPipe } from "@nestjs/common";
 import * as cookieParser from "cookie-parser";
 import { config } from "dotenv";
-import { AllExceptionsFilter } from "./common/middlewares/exception-filter";
-import { ValidationPipe } from "@nestjs/common";
+
+import { AllExceptionsFilter } from "@common/middlewares/exception-filter";
+import { AppModule } from "./modules";
 
 config();
 
