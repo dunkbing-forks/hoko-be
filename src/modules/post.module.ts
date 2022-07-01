@@ -1,10 +1,9 @@
-import { MiddlewareConsumer, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { PostsService } from "../services/post.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { PostEntity } from "../entities/post.entity";
 import { PostsController } from "../controllers/post.controller";
 import { ActionPostEntity } from "../entities/action_post.entity";
-import { LoggerMiddleware } from "../common/middlewares/logger.middleware";
 import { MediaEntity } from "../entities/media.entity";
 
 @Module({
@@ -15,8 +14,4 @@ import { MediaEntity } from "../entities/media.entity";
   providers: [PostsService],
   exports: [PostsService],
 })
-export class PostModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes(PostsController);
-  }
-}
+export class PostModule {}
