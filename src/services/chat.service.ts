@@ -1,18 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getConnection, Repository } from "typeorm";
-import { config } from "dotenv";
 import * as Pusher from "pusher";
 
-import { SendMessageDto } from "@/dtos/chat.dto";
+import { SendMessageDto } from "@dtos/chat.dto";
 import { BaseService } from "./base.service";
 import {
   ChatChannelEntity,
   chatChannelUserTable,
 } from "@entities/chat-channel.entity";
 import { ChatMessageEntity } from "@entities/chat-message.entity";
+import config from "@common/config";
 
-config();
+const soketi = config.soketi;
 
 @Injectable()
 export class ChatService extends BaseService {
@@ -25,11 +25,11 @@ export class ChatService extends BaseService {
   ) {
     super();
     this.pusher = new Pusher({
-      appId: process.env.SOKETI_APP_ID,
-      key: process.env.SOKETI_APP_KEY,
-      secret: process.env.SOKETI_APP_SECRET,
-      host: process.env.SOKETI_HOST,
-      port: process.env.SOKETI_PORT,
+      appId: soketi.appId,
+      key: soketi.key,
+      secret: soketi.secret,
+      host: soketi.host,
+      port: soketi.port,
     });
   }
 

@@ -5,14 +5,14 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { config } from "dotenv";
 
 import { UserLoginReq } from "@dtos/user.dto";
 import { MailService } from "./mail.service";
 import { UserService } from "./user.service";
 import { BaseService } from "./base.service";
+import config from "@common/config";
 
-config();
+const jwtConfig = config.jwt;
 @Injectable()
 export class AuthService extends BaseService {
   constructor(
@@ -47,7 +47,7 @@ export class AuthService extends BaseService {
           role: user.role,
           id: user.id,
         },
-        { secret: process.env.JWT_SIGN_SECRET, expiresIn: "1h" }
+        { secret: jwtConfig.secretOrKey, expiresIn: "1h" }
       ),
       refreshToken: refreshJwtToken,
       account: {
@@ -124,7 +124,7 @@ export class AuthService extends BaseService {
         role: user.role,
         id: user.id,
       },
-      { secret: process.env.JWT_SIGN_SECRET, expiresIn: "1h" }
+      { secret: jwtConfig.secretOrKey, expiresIn: "1h" }
     );
     return jwtToken;
   }

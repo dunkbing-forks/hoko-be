@@ -37,10 +37,7 @@ export class AuthController extends BaseController {
   async forgotPassword(@Res() res: Response, @Query() query: IEmail) {
     try {
       const dataResponse = await this.userService.forgotPassword(query.email);
-      await this.mailService.sendGoogleEmail(
-        dataResponse.user,
-        dataResponse.password
-      );
+      await this.mailService.sendGoogleEmail(dataResponse.user);
       return res.redirect("https://ddsgq.xyz/login");
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error);

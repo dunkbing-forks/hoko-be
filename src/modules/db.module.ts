@@ -1,18 +1,22 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AutoEncryptSubscriber } from "typeorm-encrypted";
+
+import config from "@common/config";
 import { entities } from "../entities";
+
+const dbConfig = config.database;
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      database: process.env.DB_NAME,
+      host: dbConfig.host,
+      port: dbConfig.port,
+      database: dbConfig.dbName,
       synchronize: true,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
+      username: dbConfig.dbUser,
+      password: dbConfig.dbPassword,
       logging: false,
       autoLoadEntities: true,
       entities,

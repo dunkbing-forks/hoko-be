@@ -1,24 +1,27 @@
-import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
+import { MailerService } from "@nestjs-modules/mailer";
 import * as nodemailer from "nodemailer";
-import { google } from "googleapis";
-import { config } from "dotenv";
-import { UserEntity } from "../entities/user.entity";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { google } from "googleapis";
 
-config();
+import config from "@common/config";
+import { UserEntity } from "@entities/user.entity";
+
+const googleEmailConfig = config.googleEmail;
 
 @Injectable()
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendGoogleEmail(user: UserEntity, password: string) {
+  async sendGoogleEmail(user: UserEntity) {
     const oauth2Client = new google.auth.OAuth2(
-      process.env.CLIENT_ID,
-      process.env.CLIENT_SECRET,
-      process.env.REDIRECT_URI
+      googleEmailConfig.clientId,
+      googleEmailConfig.clientSecret,
+      googleEmailConfig.redirectUri
     );
-    oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+    oauth2Client.setCredentials({
+      refresh_token: googleEmailConfig.refreshToken,
+    });
 
     try {
       const accessToken = await oauth2Client.getAccessToken();
@@ -30,10 +33,10 @@ export class MailService {
         service: "email",
         auth: {
           type: "OAuth2",
-          user: process.env.EMAIL_COMPANY,
-          clientId: process.env.CLIENT_ID,
-          clientSecret: process.env.CLIENT_SECRET,
-          refreshToken: process.env.REFRESH_TOKEN,
+          user: googleEmailConfig.companyEmail,
+          clientId: config.googleEmail.clientId,
+          clientSecret: config.googleEmail.clientSecret,
+          refreshToken: config.googleEmail.refreshToken,
           accessToken: accessToken,
         },
       };
@@ -43,7 +46,7 @@ export class MailService {
       );
 
       const mailOptions = {
-        from: `Hokolity Team <${process.env.EMAIL_COMPANY}>`,
+        from: `Hokolity Team <${googleEmailConfig.companyEmail}>`,
         to: user.email,
         subject: "Request to reset password",
         html: "",
@@ -58,11 +61,13 @@ export class MailService {
 
   async sendGoogleEmailForgot(user: UserEntity) {
     const oauth2Client = new google.auth.OAuth2(
-      process.env.CLIENT_ID,
-      process.env.CLIENT_SECRET,
-      process.env.REDIRECT_URI
+      googleEmailConfig.clientId,
+      googleEmailConfig.clientSecret,
+      googleEmailConfig.redirectUri
     );
-    oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+    oauth2Client.setCredentials({
+      refresh_token: googleEmailConfig.refreshToken,
+    });
 
     try {
       const accessToken = await oauth2Client.getAccessToken();
@@ -74,10 +79,10 @@ export class MailService {
         service: "email",
         auth: {
           type: "OAuth2",
-          user: process.env.EMAIL_COMPANY,
-          clientId: process.env.CLIENT_ID,
-          clientSecret: process.env.CLIENT_SECRET,
-          refreshToken: process.env.REFRESH_TOKEN,
+          user: googleEmailConfig.companyEmail,
+          clientId: config.googleEmail.clientId,
+          clientSecret: config.googleEmail.clientSecret,
+          refreshToken: config.googleEmail.refreshToken,
           accessToken: accessToken,
         },
       };
@@ -87,7 +92,7 @@ export class MailService {
       );
 
       const mailOptions = {
-        from: `Hokolity Team <${process.env.EMAIL_COMPANY}>`,
+        from: `Hokolity Team <${googleEmailConfig.companyEmail}>`,
         to: user.email,
         subject: "Request to reset password",
         html: "",
