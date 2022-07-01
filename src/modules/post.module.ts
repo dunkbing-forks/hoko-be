@@ -4,7 +4,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { PostEntity } from "../entities/post.entity";
 import { PostsController } from "../controllers/post.controller";
 import { ActionPostEntity } from "../entities/action_post.entity";
-import { AuthModule } from "./auth.module";
 import { LoggerMiddleware } from "../common/middlewares/logger.middleware";
 import { MediaEntity } from "../entities/media.entity";
 
@@ -16,7 +15,7 @@ import { MediaEntity } from "../entities/media.entity";
   providers: [PostsService],
   exports: [PostsService],
 })
-export class PostsModule {
+export class PostModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes(PostsController);
   }

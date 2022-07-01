@@ -2,7 +2,8 @@ import { WalletEntity } from "../entities/wallet.entity";
 import {
   Body,
   Controller,
-  Get, HttpException,
+  Get,
+  HttpException,
   HttpStatus,
   Param,
   Post,

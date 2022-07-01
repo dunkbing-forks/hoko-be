@@ -1,4 +1,10 @@
-import {IsString, IsNumber, IsBoolean, MinLength, IsOptional} from "class-validator";
+import {
+  IsString,
+  IsNumber,
+  IsBoolean,
+  MinLength,
+  IsOptional,
+} from "class-validator";
 
 export class CreateUserDto {
   @IsString()

@@ -13,7 +13,6 @@ import {
   Query,
   Body,
 } from "@nestjs/common";
-import { LocalAuthGuard } from "../common/auth/local-auth.guard";
 import { Response, Request } from "express";
 import { RefreshTokenGuard } from "../common/auth/refresh-token.guard";
 import * as CONSTANT from "../common/constants";

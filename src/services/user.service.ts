@@ -57,8 +57,6 @@ export class UserService extends BaseService {
   }
 
   public transform(user: any): any {
-    // return super.transform(obj);
-    // if (!user) return null;
     return {
       id: user.id,
       username: user.username,
@@ -257,11 +255,14 @@ export class UserService extends BaseService {
 
   async updateRefreshToken(userId: number): Promise<string> {
     const user = await this.userRepository.findOne(userId);
-    const refreshToken = this.jwtService.sign({
-      username: user.username,
-      role: user.role,
-      id: user.id,
-    }, { expiresIn: "7 days" });
+    const refreshToken = this.jwtService.sign(
+      {
+        username: user.username,
+        role: user.role,
+        id: user.id,
+      },
+      { expiresIn: "7 days" }
+    );
     user.hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await user.save();
     return refreshToken;

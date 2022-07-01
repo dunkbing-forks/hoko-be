@@ -103,7 +103,11 @@ export class ChatService extends BaseService {
     chatMessageEntity.channelId = data.channel;
     await chatMessageEntity.save();
 
-    await this.pusher.trigger(`chat_${data.channel}`, "message", chatMessageEntity);
+    await this.pusher.trigger(
+      `chat_${data.channel}`,
+      "message",
+      chatMessageEntity
+    );
 
     return chatMessageEntity;
   }
@@ -126,7 +130,7 @@ export class ChatService extends BaseService {
     });
     return {
       items: result.reverse(),
-      totalPages: Math.ceil(total/10),
+      totalPages: Math.ceil(total / 10),
       total,
       currentPage: page,
     };

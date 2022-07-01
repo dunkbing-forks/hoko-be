@@ -5,10 +5,9 @@ import { AppService } from "../services/app.service";
 import { AuthModule } from "./auth.module";
 import { config } from "dotenv";
 import { MailModule } from "./mail.module";
-import { PostsModule } from "./posts.module";
+import { PostModule } from "./post.module";
 import { DbModule } from "./db.module";
 import { ChatModule } from "./chat.module";
-import { ChatService } from "src/services/chat.service";
 
 config();
 
@@ -17,7 +16,7 @@ config();
     DbModule,
     AuthModule,
     MailModule,
-    PostsModule,
+    PostModule,
     UserModule,
     ChatModule,
   ],
