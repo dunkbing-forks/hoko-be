@@ -4,7 +4,7 @@ import { Strategy, ExtractJwt } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { BadRequestException, Injectable, Req } from "@nestjs/common";
 import { config } from "dotenv";
-import { UserReqPayload } from "src/dto/user.dto";
+import { UserReqPayload } from "@/dtos/user.dto";
 
 config();
 

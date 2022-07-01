@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PostEntity } from "../entities/post.entity";
 import { ActionPostEntity } from "../entities/action_post.entity";
-import { CreatePostDto, UpdatePostDto } from "../dto/post.dto";
+import { CreatePostDto, UpdatePostDto } from "../dtos/post.dto";
 import { MediaEntity } from "../entities/media.entity";
 import { BaseService } from "./base.service";
 

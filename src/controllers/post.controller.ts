@@ -15,8 +15,8 @@ import { Response, Request } from "express";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 import { ResponseForm } from "../common/types";
 import { BaseController } from "./base-controller";
-import { UpdatePostDto, CreatePostDto } from "../dto/post.dto";
-import { UserReqPayload } from "../dto/user.dto";
+import { UpdatePostDto, CreatePostDto } from "../dtos/post.dto";
+import { UserReqPayload } from "../dtos/user.dto";
 
 @Controller("posts")
 export class PostsController extends BaseController {

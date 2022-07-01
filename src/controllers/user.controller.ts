@@ -19,7 +19,7 @@ import {
   RoleUser,
   UpdateInformationDto,
   UserResponse,
-} from "../dto/user.dto";
+} from "../dtos/user.dto";
 import { Response } from "express";
 import { BaseController } from "./base-controller";
 

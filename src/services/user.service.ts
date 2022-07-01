@@ -10,7 +10,7 @@ import * as CONSTANTS from "../common/constants";
 import * as bcrypt from "bcrypt";
 import { BaseService } from "./base.service";
 import { JwtService } from "@nestjs/jwt";
-import { UserResponse } from "../dto/user.dto";
+import { UserResponse } from "../dtos/user.dto";
 
 const Web3 = require("web3");
 

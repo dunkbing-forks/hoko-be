@@ -9,7 +9,7 @@ import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { config } from "dotenv";
 import { BaseService } from "./base.service";
-import { UserLoginReq } from "src/dto/user.dto";
+import { UserLoginReq } from "@/dtos/user.dto";
 
 config();
 @Injectable()

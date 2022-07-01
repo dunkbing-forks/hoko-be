@@ -17,7 +17,7 @@ import { Response, Request } from "express";
 import { RefreshTokenGuard } from "../common/auth/refresh-token.guard";
 import * as CONSTANT from "../common/constants";
 import { BaseController } from "./base-controller";
-import { UserLoginReq, UserReqPayload } from "../dto/user.dto";
+import { UserLoginReq, UserReqPayload } from "../dtos/user.dto";
 
 interface IEmail {
   email: string;

@@ -2,7 +2,7 @@ import { ChatMessageEntity } from "../entities/chat-message.entity";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { config } from "dotenv";
 import * as Pusher from "pusher";
-import { SendMessageDto } from "src/dto/chat.dto";
+import { SendMessageDto } from "@/dtos/chat.dto";
 import { BaseService } from "./base.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getConnection, Repository } from "typeorm";
