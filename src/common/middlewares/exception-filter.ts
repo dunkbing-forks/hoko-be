@@ -5,13 +5,15 @@ import {
   HttpException,
   HttpStatus,
   BadRequestException,
+  Logger,
 } from "@nestjs/common";
 import { Response } from "express";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  logger = new Logger("ExceptionFilter");
   catch(exception: any, host: ArgumentsHost): void {
-    console.error("exception", exception);
+    this.logger.error(JSON.stringify(exception));
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();

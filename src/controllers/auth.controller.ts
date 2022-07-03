@@ -1,7 +1,3 @@
-import { UserService } from "../services/user.service";
-import { MailService } from "../services/mail.service";
-import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
-import { AuthService } from "../services/auth.service";
 import {
   Controller,
   Get,
@@ -13,12 +9,15 @@ import {
   Query,
   Body,
 } from "@nestjs/common";
-import { LocalAuthGuard } from "../common/auth/local-auth.guard";
 import { Response, Request } from "express";
-import { RefreshTokenGuard } from "../common/auth/refresh-token.guard";
-import * as CONSTANT from "../common/constants";
+import { UserService } from "@services/user.service";
+import { MailService } from "@services/mail.service";
+import { AuthService } from "@services/auth.service";
+import { JwtAuthGuard } from "@common/auth/jwt-auth.guard";
+import { RefreshTokenGuard } from "@common/auth/refresh-token.guard";
+import * as CONSTANT from "@common/constants";
+import { UserLoginReq, UserReqPayload } from "@dtos/user.dto";
 import { BaseController } from "./base-controller";
-import { UserLoginReq, UserReqPayload } from "../dto/user.dto";
 
 interface IEmail {
   email: string;
@@ -38,10 +37,7 @@ export class AuthController extends BaseController {
   async forgotPassword(@Res() res: Response, @Query() query: IEmail) {
     try {
       const dataResponse = await this.userService.forgotPassword(query.email);
-      await this.mailService.sendGoogleEmail(
-        dataResponse.user,
-        dataResponse.password
-      );
+      await this.mailService.sendGoogleEmail(dataResponse.user);
       return res.redirect("https://ddsgq.xyz/login");
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error);

@@ -7,16 +7,17 @@ import {
   Req,
   UseGuards,
   Get,
-  HttpException, Param,
+  HttpException,
+  Param,
 } from "@nestjs/common";
 import { Request, Response } from "express";
-import { SendMessageDto, PostChatGroupDto } from "src/dto/chat.dto";
-import { ChatService } from "../services/chat.service";
+import { ChatService } from "@services/chat.service";
 import { BaseController } from "./base-controller";
-import { UserReqPayload } from "../dto/user.dto";
-import { UserService } from "../services/user.service";
-import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
-import { ChatChannelEntity } from "../entities/chat-channel.entity";
+import { SendMessageDto, PostChatGroupDto } from "@dtos/chat.dto";
+import { UserReqPayload } from "@dtos/user.dto";
+import { UserService } from "@services/user.service";
+import { JwtAuthGuard } from "@common/auth/jwt-auth.guard";
+import { ChatChannelEntity } from "@entities/chat-channel.entity";
 
 const R = require('ramda');
 
@@ -113,10 +114,7 @@ export class ChatController extends BaseController {
 
   @UseGuards(JwtAuthGuard)
   @Get("/channels/:id/messages")
-  async getChannelMessages(
-    @Param("id") id: number,
-    @Res() res: Response,
-  ) {
+  async getChannelMessages(@Param("id") id: number, @Res() res: Response) {
     const channel = await this.chatService.getChannel(id);
     if (!channel) {
       throw new HttpException(`Channel ${id} not found`, HttpStatus.NOT_FOUND);
@@ -125,5 +123,4 @@ export class ChatController extends BaseController {
     const messages = await this.chatService.getChannelMessages(id);
     return res.status(HttpStatus.OK).send(this.toJson(messages));
   }
-
 }

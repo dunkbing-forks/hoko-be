@@ -1,15 +1,17 @@
-import { WalletEntity } from "../entities/wallet.entity";
 import {
   Body,
   Controller,
-  Get, HttpException,
+  Get,
+  HttpException,
   HttpStatus,
   Param,
   Post,
   Put,
   Res,
 } from "@nestjs/common";
-import { UserService } from "../services/user.service";
+import { Response } from "express";
+import { WalletEntity } from "@entities/wallet.entity";
+import { UserService } from "@services/user.service";
 import {
   ActiveUser,
   ChangePasswordDto,
@@ -18,8 +20,7 @@ import {
   RoleUser,
   UpdateInformationDto,
   UserResponse,
-} from "../dto/user.dto";
-import { Response } from "express";
+} from "@dtos/user.dto";
 import { BaseController } from "./base-controller";
 
 @Controller("users")

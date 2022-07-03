@@ -1,7 +1,7 @@
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { Module } from "@nestjs/common";
-import { MailService } from "../services/mail.service";
+import { MailService } from "@services/mail.service";
 import { join } from "path";
 
 @Module({

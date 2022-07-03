@@ -1,21 +1,18 @@
-
-import { MailService } from "./mail.service";
 import {
   Injectable,
   UnauthorizedException,
-  BadRequestException,
   NotFoundException,
 } from "@nestjs/common";
-import { UserService } from "./user.service";
-import * as bcrypt from "bcrypt";
-import * as moment from "moment";
 import { JwtService } from "@nestjs/jwt";
-import { config } from "dotenv";
-import { Request } from "express";
-import { BaseService } from "./base.service";
-import { UserLoginReq } from "src/dto/user.dto";
+import * as bcrypt from "bcrypt";
 
-config();
+import { UserLoginReq } from "@dtos/user.dto";
+import { MailService } from "./mail.service";
+import { UserService } from "./user.service";
+import { BaseService } from "./base.service";
+import config from "@common/config";
+
+const jwtConfig = config.jwt;
 @Injectable()
 export class AuthService extends BaseService {
   constructor(
@@ -44,11 +41,14 @@ export class AuthService extends BaseService {
     const refreshJwtToken = await this.usersService.updateRefreshToken(user.id);
 
     return {
-      accessToken: this.jwtService.sign({
-        username: user.username,
-        role: user.role,
-        id: user.id,
-      }, {secret: process.env.JWT_SIGN_SECRET, expiresIn: "1h"}),
+      accessToken: this.jwtService.sign(
+        {
+          username: user.username,
+          role: user.role,
+          id: user.id,
+        },
+        { secret: jwtConfig.secretOrKey, expiresIn: "1h" }
+      ),
       refreshToken: refreshJwtToken,
       account: {
         id: user.id,
@@ -118,11 +118,14 @@ export class AuthService extends BaseService {
     if (!user) {
       throw new NotFoundException("user not found");
     }
-    const jwtToken = this.jwtService.sign({
-      username: user.username,
-      role: user.role,
-      id: user.id,
-    }, { secret: process.env.JWT_SIGN_SECRET, expiresIn: "1h" });
+    const jwtToken = this.jwtService.sign(
+      {
+        username: user.username,
+        role: user.role,
+        id: user.id,
+      },
+      { secret: jwtConfig.secretOrKey, expiresIn: "1h" }
+    );
     return jwtToken;
   }
 

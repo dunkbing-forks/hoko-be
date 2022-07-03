@@ -1,12 +1,13 @@
-import { AuthService } from "../../services/auth.service";
+import { BadRequestException, Injectable, Req } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { Strategy, ExtractJwt } from "passport-jwt";
-import { PassportStrategy } from "@nestjs/passport";
-import { BadRequestException, Injectable, Req } from "@nestjs/common";
-import { config } from "dotenv";
-import { UserReqPayload } from "src/dto/user.dto";
 
-config();
+import config from "@common/config";
+import { UserReqPayload } from "@dtos/user.dto";
+import { AuthService } from "@services/auth.service";
+
+const jwtConfig = config.jwt;
 
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
@@ -22,7 +23,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
       ]),
       ignoreExpiration: false,
       passReqToCallback: true,
-      secretOrKey: process.env.JWT_SIGN_SECRET,
+      secretOrKey: jwtConfig.secretOrKey,
     });
   }
 

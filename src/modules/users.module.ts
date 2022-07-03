@@ -1,21 +1,21 @@
-import { WalletEntity } from "../entities/wallet.entity";
-import { ContactEntity } from "../entities/contact.entity";
-import { Module, MiddlewareConsumer } from "@nestjs/common";
-import { UserController } from "../controllers/user.controller";
-import { UserService } from "../services/user.service";
-import { LoggerMiddleware } from "../common/middlewares/logger.middleware";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserEntity } from "../entities/user.entity";
+import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
-import { config } from "dotenv";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
-config();
+import { WalletEntity } from "@entities/wallet.entity";
+import { ContactEntity } from "@entities/contact.entity";
+import { UserController } from "@controllers/user.controller";
+import { UserService } from "@services/user.service";
+import { UserEntity } from "@entities/user.entity";
+import config from "@common/config";
+
+const jwtConfig = config.jwt;
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, ContactEntity, WalletEntity]),
     JwtModule.register({
-      secret: process.env.JWT_SIGN_SECRET,
+      secret: jwtConfig.secretOrKey,
       signOptions: { expiresIn: "7d" },
     }),
   ],
@@ -23,8 +23,4 @@ config();
   providers: [UserService],
   exports: [UserService],
 })
-export class UserModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes(UserController);
-  }
-}
+export class UserModule {}

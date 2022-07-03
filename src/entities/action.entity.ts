@@ -3,12 +3,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   BaseEntity,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { CommentEntity } from "./comment.entity";
 
 enum ActionType {
   LIKE = "LIKE",
