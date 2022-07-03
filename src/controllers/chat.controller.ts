@@ -18,6 +18,8 @@ import { UserService } from "../services/user.service";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 import { ChatChannelEntity } from "../entities/chat-channel.entity";
 
+const R = require('ramda');
+
 @Controller("chat")
 export class ChatController extends BaseController {
   constructor(
@@ -36,6 +38,10 @@ export class ChatController extends BaseController {
   ) {
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
+
+    data.memberIds.push(ownerId)
+
+    data.memberIds =  R.uniq(data.memberIds)
 
     const usernames = await Promise.all(
       data.memberIds.map(async (id) => {

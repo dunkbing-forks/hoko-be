@@ -1,19 +1,21 @@
 version: "3.4"
 
 services:
-  # mysqldb:
-  #   image: mysql
-  #   restart: always
-  #   environment:
-  #     DB_HOST: "%"
-  #     DB_NAME: Hokolity
-  #     DB_USER: root
-  #     DB_PASSWORD: HOKOLITY12345678
-  #     MYSQL_ROOT_PASSWORD: HOKOLITY12345678
-  #   ports:
-  #     - 3306:3306
-  #   expose:
-  #     - 3306
+  mysqldb:
+    image: mysql
+    restart: always
+    environment:
+      DB_HOST: "%"
+      DB_NAME: Hokolity
+      DB_USER: root
+      DB_PASSWORD: HOKOLITY12345678
+      MYSQL_ROOT_PASSWORD: HOKOLITY12345678
+    ports:
+      - 3306:3306
+    volumes:
+      - ./Services_Data/lotery/postgres:/var/lib/postgresql/data/
+    expose:
+      - 3306
   soketi:
     image: quay.io/soketi/soketi:0.34-16-debian
     restart: always
