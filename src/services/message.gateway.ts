@@ -1,5 +1,4 @@
 import {
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -7,10 +6,13 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
-import { Socket, Server } from "socket.io";
-import {Logger} from "@nestjs/common";
+import { Socket } from "socket.io";
+import { Server } from "ws";
+import { Logger } from "@nestjs/common";
 
-@WebSocketGateway({ namespace: "chat", cors: { origin: "*" } })
+import config from "@common/config";
+
+@WebSocketGateway({ namespace: "chat", cors: { origin: config.corsOrigin } })
 export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private logger = new Logger(MessageGateway.name);
 
@@ -41,7 +43,7 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   
   @SubscribeMessage("call-user")
   public callUser(client: Socket, data: any) {
-    client.to(data.to).emit("callMade", {
+    client.to(data.to).emit("call-made", {
       offer: data.offer,
       socket: client.id,
     });
@@ -61,13 +63,13 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       socket: client.id,
     });
   }
-  
+
   afterInit(server: Server): any {
-    this.logger.log("MessageGateway initialized");
+    this.logger.log(`Server started: ${server.name}`);
   }
 
   handleConnection(client: Socket, ...args: any[]): any {
-    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.log(`Client connected: ${client.id}, args: ${args}`);
   }
 
   handleDisconnect(client: Socket): any {

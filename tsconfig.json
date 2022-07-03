@@ -21,5 +21,6 @@
     },
     "incremental": true
   },
-  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "web", "**/*.spec.ts"]
 }
