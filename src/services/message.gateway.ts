@@ -12,7 +12,7 @@ import { Logger } from "@nestjs/common";
 
 import config from "@common/config";
 
-@WebSocketGateway({ namespace: "chat", cors: { origin: config.corsOrigin } })
+@WebSocketGateway({ namespace: "chat", cors: { origin: config.feOrigin } })
 export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private logger = new Logger(MessageGateway.name);
 

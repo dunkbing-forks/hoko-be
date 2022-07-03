@@ -4,7 +4,8 @@ config();
 
 export default {
   port: Number(process.env.PORT) || 3000,
-  corsOrigin: process.env.CORS_ORIGIN,
+  feOrigin: process.env.FE_ORIGIN,
+  meetOrigin: process.env.MEET_ORIGIN,
   nodeEnv: process.env.NODE_ENV,
   database: {
     host: process.env.DB_HOST,

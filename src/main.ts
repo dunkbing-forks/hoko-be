@@ -41,7 +41,7 @@ async function bootstrap() {
     logger: getLogLevels(config.nodeEnv !== "production"),
   });
   app.enableCors({
-    origin: config.corsOrigin,
+    origin: [config.feOrigin, config.meetOrigin],
     credentials: true,
   });
   app.setGlobalPrefix("api");
