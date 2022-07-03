@@ -5,10 +5,10 @@ import { useCalculateVideoLayout, useCreateMediaStream, useStartPeerSession } fr
 import { toggleFullscreen } from '../utils/helpers';
 
 export const Room = () => {
-  const { room } = useParams();
-  const galleryRef = useRef();
-  const localVideoRef = useRef();
-  const mainRef = useRef();
+  const { room } = useParams<{room: string}>();
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   const userMediaStream = useCreateMediaStream(localVideoRef);
   const { connectedUsers, shareScreen, cancelScreenSharing, isScreenShared } = useStartPeerSession(
@@ -19,16 +19,12 @@ export const Room = () => {
 
   useCalculateVideoLayout(galleryRef, connectedUsers.length + 1);
 
-  async function handleScreenSharing(share) {
-    if (share) {
-      await shareScreen();
-    } else {
-      await cancelScreenSharing();
-    }
+  async function handleScreenSharing(share: boolean) {
+    share ? await shareScreen() : cancelScreenSharing();
   }
 
-  function handleFullscreen(fullscreen) {
-    toggleFullscreen(fullscreen, mainRef.current);
+  function handleFullscreen(fullScreen: boolean) {
+    toggleFullscreen(fullScreen, mainRef.current);
   }
 
   return (
@@ -37,7 +33,7 @@ export const Room = () => {
 
       <div className="main" ref={mainRef}>
         <Gallery ref={galleryRef}>
-          <LocalVideo ref={localVideoRef} autoPlay playsInline muted />
+          <LocalVideo autoPlay playsInline muted ref={localVideoRef} />
           {connectedUsers.map((user) => (
             <RemoteVideo key={user} id={user} autoPlay playsInline />
           ))}

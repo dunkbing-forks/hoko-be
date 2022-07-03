@@ -1,22 +1,22 @@
 import { useEffect } from 'react';
 
-export const useCalculateVoiceVolume = (stream, id) => {
+export const useCalculateVoiceVolume = (stream: MediaStream | null, id: string) => {
   useEffect(() => {
     if (!stream) return;
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioCtx = new window.AudioContext();
     const analyser = audioCtx.createAnalyser();
     const biquadFilter = audioCtx.createBiquadFilter();
     const gainNode = audioCtx.createGain();
     const distortion = audioCtx.createWaveShaper();
 
-    let drawVisual;
+    let drawVisual: number;
     analyser.minDecibels = -90;
     analyser.maxDecibels = -10;
     analyser.smoothingTimeConstant = 0.85;
 
-    const canvas = document.getElementById(`canvas-${id}`);
+    const canvas = document.getElementById(`canvas-${id}`) as HTMLCanvasElement;
 
-    const canvasCtx = canvas.getContext('2d');
+    const canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
     try {
       const source = audioCtx.createMediaStreamSource(stream);
@@ -29,7 +29,7 @@ export const useCalculateVoiceVolume = (stream, id) => {
       distortion.oversample = '4x';
       biquadFilter.gain.setTargetAtTime(0, audioCtx.currentTime, 0);
 
-      function visualize() {
+      const visualize = () => {
         const WIDTH = canvas.width;
         const HEIGHT = canvas.height;
 
@@ -55,7 +55,7 @@ export const useCalculateVoiceVolume = (stream, id) => {
 
           canvasCtx.beginPath();
 
-          const sliceWidth = (WIDTH * 1.0) / bufferLength;
+          const sliceWidth = WIDTH / bufferLength;
           let x = 0;
 
           for (let i = 0; i < bufferLength; i++) {
@@ -76,7 +76,7 @@ export const useCalculateVoiceVolume = (stream, id) => {
         };
 
         draw();
-      }
+      };
       visualize();
     } catch (err) {
       console.log(err);

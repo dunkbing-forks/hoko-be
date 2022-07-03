@@ -1,11 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+import {RefObject, useEffect, useMemo, useState} from 'react';
 import { createPeerConnectionContext } from '../utils/PeerConnectionSession';
 
-export const useStartPeerSession = (room, userMediaStream, localVideoRef) => {
+export const useStartPeerSession = (
+  room: string,
+  userMediaStream: MediaStream | null,
+  localVideoRef: RefObject<HTMLVideoElement>,
+) => {
   const peerVideoConnection = useMemo(() => createPeerConnectionContext(), []);
 
-  const [displayMediaStream, setDisplayMediaStream] = useState(null);
-  const [connectedUsers, setConnectedUsers] = useState([]);
+  const [displayMediaStream, setDisplayMediaStream] = useState<MediaStream | null>(null);
+  const [connectedUsers, setConnectedUsers] = useState<Array<string>>([]);
 
   useEffect(() => {
     if (userMediaStream) {
@@ -13,9 +17,9 @@ export const useStartPeerSession = (room, userMediaStream, localVideoRef) => {
       peerVideoConnection.onAddUser((user) => {
         setConnectedUsers((users) => [...users, user]);
         peerVideoConnection.addPeerConnection(`${user}`, userMediaStream, (_stream) => {
-          document.getElementById(user).srcObject = _stream;
+          (document.getElementById(user) as HTMLMediaElement).srcObject = _stream;
         });
-        peerVideoConnection.callUser(user);
+        void peerVideoConnection.callUser(user);
       });
 
       peerVideoConnection.onRemoveUser((socketId) => {
@@ -27,7 +31,7 @@ export const useStartPeerSession = (room, userMediaStream, localVideoRef) => {
         setConnectedUsers(users);
         for (const user of users) {
           peerVideoConnection.addPeerConnection(`${user}`, userMediaStream, (_stream) => {
-            document.getElementById(user).srcObject = _stream;
+            (document.getElementById(user) as HTMLMediaElement).srcObject = _stream;
           });
         }
       });
@@ -43,34 +47,39 @@ export const useStartPeerSession = (room, userMediaStream, localVideoRef) => {
     };
   }, [peerVideoConnection, room, userMediaStream]);
 
-  const cancelScreenSharing = async () => {
-    const senders = await peerVideoConnection.senders.filter((sender) => sender.track.kind === 'video');
+  const cancelScreenSharing = () => {
+    const senders = peerVideoConnection.senders.filter((sender) => sender.track?.kind === 'video');
 
-    if (senders) {
-      senders.forEach((sender) =>
-        sender.replaceTrack(userMediaStream.getTracks().find((track) => track.kind === 'video')),
-      );
+    if (senders.length) {
+      senders.forEach((sender) => {
+        const track = userMediaStream?.getTracks()?.find((track) => track.kind === 'video') || null;
+        void sender.replaceTrack(track);
+      });
     }
 
-    localVideoRef.current.srcObject = userMediaStream;
-    displayMediaStream.getTracks().forEach((track) => track.stop());
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = userMediaStream;
+    }
+    displayMediaStream?.getTracks()?.forEach((track) => track.stop());
     setDisplayMediaStream(null);
   };
 
   const shareScreen = async () => {
     const stream = displayMediaStream || (await navigator.mediaDevices.getDisplayMedia());
 
-    const senders = await peerVideoConnection.senders.filter((sender) => sender.track.kind === 'video');
+    const senders = peerVideoConnection.senders.filter((sender) => sender.track?.kind === 'video');
 
     if (senders) {
       senders.forEach((sender) => sender.replaceTrack(stream.getTracks()[0]));
     }
 
     stream.getVideoTracks()[0].addEventListener('ended', () => {
-      cancelScreenSharing(stream);
+      void cancelScreenSharing();
     });
 
-    localVideoRef.current.srcObject = stream;
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = stream;
+    }
 
     setDisplayMediaStream(stream);
   };

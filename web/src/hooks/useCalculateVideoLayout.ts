@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import {RefObject, useEffect} from 'react';
 import { calculateLayout } from '../utils/helpers';
 
-export const useCalculateVideoLayout = (galleryRef, videoCount) => {
+export const useCalculateVideoLayout = (galleryRef: RefObject<HTMLDivElement>, videoCount: number) => {
   useEffect(() => {
     const recalculateLayout = () => {
       const headerHeight = document.getElementsByTagName('header')?.[0]?.offsetHeight;

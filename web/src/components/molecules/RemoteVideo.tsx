@@ -2,14 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useCalculateVoiceVolume } from '../../hooks';
 import { Video, VideoContainer, VoiceVisualizer } from '../atoms';
 
-export const RemoteVideo = (props) => {
-  const [mediaStream, setMediaStream] = useState();
+type Props = {
+  id: string;
+  autoPlay: boolean;
+  playsInline: boolean;
+}
 
-  useCalculateVoiceVolume(mediaStream, props.id);
+export const RemoteVideo: React.FC<Props> = (props) => {
+  const { id } = props;
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+
+  useCalculateVoiceVolume(mediaStream, id);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const stream = document.getElementById(props.id).srcObject;
+      const stream = (document.getElementById(id) as HTMLMediaElement)?.srcObject as MediaStream;
 
       if (stream) {
         setMediaStream(stream);
@@ -20,11 +27,11 @@ export const RemoteVideo = (props) => {
     return () => {
       clearInterval(interval);
     };
-  }, [props.id]);
+  }, [id]);
 
   return (
     <VideoContainer>
-      <VoiceVisualizer id={props.id} />
+      <VoiceVisualizer id={id} />
       <Video {...props} />
     </VideoContainer>
   );

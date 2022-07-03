@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Button } from '../atoms';
 
-export const VideoControls = ({ isScreenShared, onScreenShare, onToggleFullscreen }) => {
+type Props = {
+  isScreenShared: boolean;
+  onScreenShare: (share: boolean) => void;
+  onToggleFullscreen: (value: boolean) => void;
+}
+
+export const VideoControls: React.FC<Props> = ({ isScreenShared, onScreenShare, onToggleFullscreen }) => {
   const [isFullscreen, setFullscreen] = useState(false);
 
   const handleToggleFullscreen = () => {

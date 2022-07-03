@@ -1,25 +1,26 @@
-import { io } from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 
 const { RTCPeerConnection, RTCSessionDescription } = window;
 
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+function capitalizeFirstLetter(str: string) {
+  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
 }
 
 class PeerConnectionSession {
-  _onConnected;
-  _onDisconnected;
-  _room;
-  peerConnections = {};
-  senders = [];
-  listeners = {};
+  _onConnected: ((event: Event, id: string) => void) | null = null;
+  _onDisconnected: ((event: Event, id: string) => void) | null = null;
+  _room = "";
+  peerConnections: Record<string, RTCPeerConnection> = {};
+  senders: Array<RTCRtpSender> = [];
+  listeners: Record<string, (evt: Event) => void> = {};
+  private socket:  Socket;
 
-  constructor(socket) {
-    this.socket = socket;
+  constructor(_socket: Socket) {
+    this.socket = _socket;
     this.onCallMade();
   }
 
-  addPeerConnection(id, stream, callback) {
+  addPeerConnection(id: string, stream: MediaStream, callback: (stream: MediaStream) => void) {
     this.peerConnections[id] = new RTCPeerConnection({
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     });
@@ -29,7 +30,7 @@ class PeerConnectionSession {
     });
 
     this.listeners[id] = (event) => {
-      const fn = this['_on' + capitalizeFirstLetter(this.peerConnections[id].connectionState)];
+      const fn = (this as any)[`_on${capitalizeFirstLetter(this.peerConnections[id].connectionState)}`];
       fn && fn(event, id);
     };
 
@@ -43,13 +44,13 @@ class PeerConnectionSession {
     console.log(this.peerConnections);
   }
 
-  removePeerConnection(id) {
+  removePeerConnection(id: string) {
     this.peerConnections[id].removeEventListener('connectionstatechange', this.listeners[id]);
     delete this.peerConnections[id];
     delete this.listeners[id];
   }
 
-  async callUser(to) {
+  async callUser(to: string) {
     if (this.peerConnections[to].iceConnectionState === 'new') {
       const offer = await this.peerConnections[to].createOffer();
       await this.peerConnections[to].setLocalDescription(new RTCSessionDescription(offer));
@@ -58,15 +59,15 @@ class PeerConnectionSession {
     }
   }
 
-  onConnected(callback) {
+  onConnected(callback: (event: Event, id: string) => void) {
     this._onConnected = callback;
   }
 
-  onDisconnected(callback) {
+  onDisconnected(callback: (event: Event, id: string) => void) {
     this._onDisconnected = callback;
   }
 
-  joinRoom(room) {
+  joinRoom(room: string) {
     this._room = room;
     this.socket.emit('join-room', room);
   }
@@ -84,25 +85,25 @@ class PeerConnectionSession {
     });
   }
 
-  onAddUser(callback) {
+  onAddUser(callback: (socketId: string) => void) {
     this.socket.on(`${this._room}-add-user`, async ({ user }) => {
       callback(user);
     });
   }
 
-  onRemoveUser(callback) {
+  onRemoveUser(callback: (socketId: string) => void) {
     this.socket.on(`${this._room}-remove-user`, ({ socketId }) => {
       callback(socketId);
     });
   }
 
-  onUpdateUserList(callback) {
+  onUpdateUserList(callback: (users: Array<string>, current: string) => void) {
     this.socket.on(`${this._room}-update-user-list`, ({ users, current }) => {
       callback(users, current);
     });
   }
 
-  onAnswerMade(callback) {
+  onAnswerMade(callback: (socketId: string) => void) {
     this.socket.on('answer-made', async (data) => {
       await this.peerConnections[data.socket].setRemoteDescription(new RTCSessionDescription(data.answer));
       callback(data.socket);
@@ -117,7 +118,7 @@ class PeerConnectionSession {
 }
 
 export const createPeerConnectionContext = () => {
-  const socket = io(process.env.REACT_APP_SOCKET_URL, { transports: ["websocket"] });
+  const socket = io(`${process.env.REACT_APP_SOCKET_URL}`, { transports: ["websocket"] });
   console.log(process.env.REACT_APP_SOCKET_URL);
 
   return new PeerConnectionSession(socket);

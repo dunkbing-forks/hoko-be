@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import {RefObject, useEffect, useState} from 'react';
 
-export const useCreateMediaStream = (localVideoRef) => {
-  const [userMediaStream, setUserMediaStream] = useState(null);
+export const useCreateMediaStream = (localVideoRef: RefObject<HTMLVideoElement>) => {
+  const [userMediaStream, setUserMediaStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
     const createMediaStream = async () => {
@@ -14,12 +14,14 @@ export const useCreateMediaStream = (localVideoRef) => {
         audio: true,
       });
 
-      localVideoRef.current.srcObject = stream;
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
 
       setUserMediaStream(stream);
     };
 
-    createMediaStream();
+    void createMediaStream();
   }, [localVideoRef]);
 
   return userMediaStream;

@@ -2,15 +2,14 @@ import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import styles from '../App.css';
 import { Button, Header, OrganismsMain } from '../components';
-import logo from '../images/logo.svg';
 
 export const Main = () => {
-  let history = useHistory();
-  const inputRef = useRef();
+  const history = useHistory();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className={styles.container}>
-      <Header title="Hokodity" picture={logo} />
+      <Header title="Hokodity" />
       <OrganismsMain full>
         <div style={{ color: 'white', display: 'flex' }}>
           <div
@@ -44,7 +43,7 @@ export const Main = () => {
               type="text"
             />
           </div>
-          <Button onClick={() => history.push(`/${inputRef.current.value}`)}>Login</Button>
+          <Button onClick={() => history.push(`/${inputRef.current?.value}`)}>Login</Button>
         </div>
       </OrganismsMain>
     </div>

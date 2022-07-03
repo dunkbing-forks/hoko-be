@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-export const OrganismsMain = styled.main`
+type Props = {
+  full: boolean;
+}
+
+export const OrganismsMain = styled.main<Props>`
   flex: 1;
   position: relative;
   margin-left: ${(props) => (props.full ? '0' : '280px')};
