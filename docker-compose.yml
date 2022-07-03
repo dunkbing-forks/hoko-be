@@ -30,8 +30,8 @@ services:
     expose:
       - 6001
   hokodity:
-    # depends_on:
-    #   - mysqldb
+    depends_on:
+      - mysqldb
     image: backend
     build:
       context: ./
