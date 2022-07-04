@@ -187,7 +187,7 @@ export class UserService extends BaseService {
   }
 
   async changePassword(data: ChangePassword): Promise<any> {
-    const user = await this.userRepository.findOne(data.userId);
+    const user = await this.userRepository.findOneBy({ id: data.userId });
     if (!user) {
       throw new HttpException("User not found", HttpStatus.NOT_FOUND);
     }
@@ -255,7 +255,7 @@ export class UserService extends BaseService {
   // }
 
   async updateRefreshToken(userId: number): Promise<string> {
-    const user = await this.userRepository.findOne(userId);
+    const user = await this.userRepository.findOneBy({ id: userId });
     const refreshToken = this.jwtService.sign(
       {
         username: user.username,
@@ -273,7 +273,7 @@ export class UserService extends BaseService {
     username: string,
     refreshToken: string
   ): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepository.findOneBy({
       username,
       hashedRefreshToken: refreshToken,
     });
@@ -294,7 +294,7 @@ export class UserService extends BaseService {
   }
 
   async updateUserInformation(req: any): Promise<ContactEntity> {
-    const contact = await this.contactRepository.findOne({ ownerId: req.id });
+    const contact = await this.contactRepository.findOneBy({ ownerId: req.id });
     contact.firstName = req.firstName;
     contact.lastName = req.lastName;
     contact.dateOfBirth = new Date(moment(req.dob, ["DD/MM/YYYY"]).format());
@@ -306,14 +306,14 @@ export class UserService extends BaseService {
   }
 
   async updateUserActive(req: any): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ id: req.id });
+    const user = await this.userRepository.findOneBy({ id: req.id });
     user.active = req.active;
     await user.save();
     return user;
   }
 
   async updateUserRole(req: any): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ id: req.roleId });
+    const user = await this.userRepository.findOneBy({ id: req.roleId });
     user.role = req.roleValue;
     await user.save();
     return user;

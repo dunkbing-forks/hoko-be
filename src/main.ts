@@ -10,6 +10,7 @@ import { ServerOptions } from "socket.io";
 import { AllExceptionsFilter } from "@common/middlewares/exception-filter";
 import { AppModule } from "./modules";
 import config from "@common/config";
+import {getLogLevels} from "@common/utils";
 
 export class RedisIoAdapter extends IoAdapter {
   private adapterConstructor: ReturnType<typeof createAdapter>;
@@ -37,10 +38,10 @@ export class RedisIoAdapter extends IoAdapter {
 async function bootstrap() {
   const logger = new Logger("bootstrap");
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: config.nodeEnv !== "production",
+    logger: getLogLevels(config.nodeEnv !== "production"),
   });
   app.enableCors({
-    origin: config.corsOrigin,
+    origin: [config.feOrigin, config.meetOrigin],
     credentials: true,
   });
   app.setGlobalPrefix("api");

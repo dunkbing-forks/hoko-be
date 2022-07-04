@@ -125,7 +125,7 @@ export class PostsService extends BaseService {
   }
 
   async updatePost(id: number, post: UpdatePostDto): Promise<PostEntity> {
-    const currentPost = await this.postsRepository.findOne(id);
+    const currentPost = await this.postsRepository.findOneBy({ id });
 
     if (currentPost) {
       currentPost.content = post.content;

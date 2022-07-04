@@ -1,44 +1,60 @@
 version: "3.4"
 
 services:
-  mysqldb:
-    image: mysql
-    restart: always
+  db:
+    image: mysql:latest
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
     environment:
-      DB_HOST: "%"
-      DB_NAME: Hokolity
-      DB_USER: root
-      DB_PASSWORD: HOKOLITY12345678
-      MYSQL_ROOT_PASSWORD: HOKOLITY12345678
+      MYSQL_DATABASE: hokodity
+      MYSQL_ROOT_PASSWORD: mysqlpw
     ports:
-      - 3306:3306
+      - "6379:3306"
+    restart: always
     volumes:
-      - ./Services_Data/lotery/postgres:/var/lib/postgresql/data/
-    expose:
-      - 3306
+      - db:/var/lib/mysql
+
   soketi:
     image: quay.io/soketi/soketi:0.34-16-debian
-    restart: always
     environment:
       DEFAULT_APP_ID: "1419288"
       DEFAULT_APP_KEY: "25ffc95438e35357c167"
       DEFAULT_APP_SECRET: "07c6ed0a7df866a0feb2"
       DEFAULT_APP_MAX_CONNS: 20
-      DEFAULT_APP_ENABLE_CLIENT_MESSAGES: ""
+      DEFAULT_APP_ENABLE_CLIENT_MESSAGES: 1
     ports:
-      - 6001:6001
+      - "6001:6001"
     expose:
       - 6001
+    restart: always
+    volumes:
+      - db:/data/soketi
+
   hokodity:
     depends_on:
-      - mysqldb
-    image: backend
+      - db
+    image: hokobackend
+    restart: always
     build:
       context: ./
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: mysqlpw
+      DB_NAME: hokodity
+      JWT_SIGN_SECRET: "secret"
     ports:
-      - 3001:3001
+      - "3001:3001"
     expose:
       - 3001
+    links:
+      - db
+    volumes:
+      - ./:/src
+
+volumes:
+  db:
+    driver: local

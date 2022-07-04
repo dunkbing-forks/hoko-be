@@ -33,29 +33,8 @@ export class ChatService extends BaseService {
     });
   }
 
-  async checkGroupExist(memberIds: number[]) {
-    try {
-      let group = await this.channelRepository.findOne({
-        where: {
-          userIds: `${memberIds}`,
-        },
-      });
-
-      if (!group) {
-        group = await this.channelRepository.findOne({
-          where: {
-            userIds: `${memberIds.reverse()}`,
-          },
-        });
-      }
-      return group;
-    } catch (e) {
-      console.log(e.message);
-    }
-  }
-
   async getGroupOfSignalBot(bot_id: number) {
-    return await this.channelRepository.findOne({
+    return await this.channelRepository.findOneBy({
       ownerId: bot_id,
     });
   }
@@ -87,11 +66,11 @@ export class ChatService extends BaseService {
   }
 
   async getChannel(channelId: number) {
-    return await this.channelRepository.findOne(channelId);
+    return await this.channelRepository.findOneBy({ id: channelId });
   }
 
   async addMessage(ownerId: number, data: SendMessageDto) {
-    const chatGroup = await this.channelRepository.findOne(data.channel);
+    const chatGroup = await this.channelRepository.findOneBy({ id: data.channel });
     if (!chatGroup) {
       throw new HttpException(
         `Chat group ${data.channel} not found`,

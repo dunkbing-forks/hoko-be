@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AutoEncryptSubscriber } from "typeorm-encrypted";
 
 import config from "@common/config";
 import { entities } from "../entities";
@@ -20,7 +19,6 @@ const dbConfig = config.database;
       logging: false,
       autoLoadEntities: true,
       entities,
-      subscribers: [AutoEncryptSubscriber],
     }),
   ],
 })
