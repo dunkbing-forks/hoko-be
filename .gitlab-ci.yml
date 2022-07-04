@@ -5,13 +5,18 @@ services:
 stages:
   - build
 
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA
+  IMAGE_LATEST_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest
+
 build:
   stage: build
   before_script:
-    - export VERSION=$(date --utc '+%Y-%m-%d-%H-%M')
     - echo "$CI_REGISTRY_PASSWORD" | docker login ${CI_REGISTRY} -u ${CI_REGISTRY_USER} --password-stdin
   script:
-    - docker build -t $CI_REGISTRY_IMAGE:$VERSION .
-    - docker push $CI_REGISTRY_IMAGE:$VERSION
+    - docker build . -t $IMAGE_TAG  -f  Dockerfile
+    - docker tag $IMAGE_TAG $IMAGE_LATEST_TAG
+    - docker push $IMAGE_TAG
+    - docker push $IMAGE_LATEST_TAG
   only:
     - dev
