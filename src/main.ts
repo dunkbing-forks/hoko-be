@@ -12,13 +12,15 @@ import { AppModule } from "./modules";
 import config from "@common/config";
 import {getLogLevels} from "@common/utils";
 
+const redisConfig = config.redis
+
 export class RedisIoAdapter extends IoAdapter {
   private adapterConstructor: ReturnType<typeof createAdapter>;
 
   private logger = new Logger(RedisIoAdapter.name);
 
   async connectToRedis(): Promise<void> {
-    const pubClient = createClient({ url: "redis://localhost:6379" });
+    const pubClient = createClient({ url: `redis://:${redisConfig.password}@${redisConfig.host}:${redisConfig.port}` });
     const subClient = pubClient.duplicate();
 
     await Promise.all([pubClient.connect(), subClient.connect()]).then(() => {

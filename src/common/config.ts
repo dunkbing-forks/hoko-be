@@ -17,6 +17,11 @@ export default {
   jwt: {
     secretOrKey: process.env.JWT_SIGN_SECRET,
   },
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
+  },
   soketi: {
     appId: process.env.SOKETI_APP_ID,
     key: process.env.SOKETI_APP_KEY,
