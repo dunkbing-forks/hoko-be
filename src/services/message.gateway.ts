@@ -19,11 +19,11 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   @WebSocketServer()
   server: Server;
   private activeSockets: { room: string, id: string }[] = [];
-  
+
   @SubscribeMessage("join-room")
   public joinRoom(client: Socket, room: string) {
     const existingSocket = this.activeSockets.find(s => s.id === client.id);
-    
+
     if (!existingSocket) {
       this.activeSockets = [...this.activeSockets, { room, id: client.id }];
       client.emit(`${room}-update-user-list`, {
@@ -37,10 +37,10 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
         user: client.id,
       });
     }
-    
+
     return this.logger.log(`Client ${client.id} joined room: ${room}`);
   }
-  
+
   @SubscribeMessage("call-user")
   public callUser(client: Socket, data: any) {
     client.to(data.to).emit("call-made", {
