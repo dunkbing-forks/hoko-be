@@ -25,17 +25,19 @@ const callEvent = {
   removeUser: (room: string) => `${room}-remove-user`,
 };
 
-@WebSocketGateway({ namespace: "chat", cors: { origin: config.feOrigin } })
-export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  private logger = new Logger(MessageGateway.name);
+@WebSocketGateway({ namespace: "meet", cors: { origin: config.feOrigin } })
+export class MeetGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  private logger = new Logger(MeetGateway.name);
 
   @WebSocketServer()
   server: Server;
-  private activeSockets: { room: string, id: string }[] = [];
+  private activeSockets: { room: string; id: string }[] = [];
 
   @SubscribeMessage(callEvent.joinRoom)
   public joinRoom(client: Socket, room: string) {
-    const existingSocket = this.activeSockets.find(s => s.id === client.id);
+    const existingSocket = this.activeSockets.find((s) => s.id === client.id);
 
     if (!existingSocket) {
       this.activeSockets = [...this.activeSockets, { room, id: client.id }];
@@ -86,12 +88,14 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   }
 
   handleDisconnect(client: Socket): any {
-    const existingSocket = this.activeSockets.find(s => s.id === client.id);
+    const existingSocket = this.activeSockets.find((s) => s.id === client.id);
     if (!existingSocket) return;
 
-    this.activeSockets = this.activeSockets.filter(s => s.id !== client.id);
+    this.activeSockets = this.activeSockets.filter((s) => s.id !== client.id);
 
-    client.broadcast.emit(callEvent.removeUser(existingSocket.room), { socketId: client.id });
+    client.broadcast.emit(callEvent.removeUser(existingSocket.room), {
+      socketId: client.id,
+    });
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 }

@@ -70,7 +70,9 @@ export class ChatService extends BaseService {
   }
 
   async addMessage(ownerId: number, data: SendMessageDto) {
-    const chatGroup = await this.channelRepository.findOneBy({ id: data.channel });
+    const chatGroup = await this.channelRepository.findOneBy({
+      id: data.channel,
+    });
     if (!chatGroup) {
       throw new HttpException(
         `Chat group ${data.channel} not found`,

@@ -10,7 +10,7 @@ import { ServerOptions } from "socket.io";
 import { AllExceptionsFilter } from "@common/middlewares/exception-filter";
 import { AppModule } from "./modules";
 import config from "@common/config";
-import {getLogLevels} from "@common/utils";
+import { getLogLevels } from "@common/utils";
 
 export class RedisIoAdapter extends IoAdapter {
   private adapterConstructor: ReturnType<typeof createAdapter>;
@@ -22,7 +22,9 @@ export class RedisIoAdapter extends IoAdapter {
     const subClient = pubClient.duplicate();
 
     await Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
-      this.logger.log(`Connected to Redis: ${pubClient.isReady}, ${subClient.isReady}`);
+      this.logger.log(
+        `Connected to Redis: ${pubClient.isReady}, ${subClient.isReady}`
+      );
     });
 
     this.adapterConstructor = createAdapter(pubClient, subClient);
