@@ -14,6 +14,13 @@ services:
     volumes:
       - db:/var/lib/mysql
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - db:/data/redis
   soketi:
     image: quay.io/soketi/soketi:0.34-16-debian
     environment:
