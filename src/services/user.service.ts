@@ -179,6 +179,7 @@ export class UserService extends BaseService {
 
       return newUser;
     } catch (error) {
+      console.log(error);
       await this.rollbackTransaction();
       throw error;
     } finally {

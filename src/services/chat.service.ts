@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { getConnection, Repository } from "typeorm";
-import * as Pusher from "pusher";
+import { Repository } from "typeorm";
 
 import { SendMessageDto } from "@dtos/chat.dto";
 import { BaseService } from "./base.service";
@@ -12,11 +11,8 @@ import {
 import { ChatMessageEntity } from "@entities/chat-message.entity";
 import config from "@common/config";
 
-const soketi = config.soketi;
-
 @Injectable()
 export class ChatService extends BaseService {
-  pusher: Pusher;
   constructor(
     @InjectRepository(ChatChannelEntity)
     private readonly channelRepository: Repository<ChatChannelEntity>,
@@ -24,13 +20,6 @@ export class ChatService extends BaseService {
     private readonly chatMessageRepository: Repository<ChatMessageEntity>
   ) {
     super();
-    this.pusher = new Pusher({
-      appId: soketi.appId,
-      key: soketi.key,
-      secret: soketi.secret,
-      host: soketi.host,
-      port: soketi.port,
-    });
   }
 
   async getGroupOfSignalBot(bot_id: number) {
@@ -44,13 +33,14 @@ export class ChatService extends BaseService {
     memberIds: number[],
     displayName: string
   ) {
+    await this.startTransaction();
     const chatGroupEntity = new ChatChannelEntity();
     chatGroupEntity.ownerId = ownerId;
     chatGroupEntity.displayName = displayName;
     await chatGroupEntity.save();
     await chatGroupEntity.reload();
 
-    await getConnection()
+    await this.queryRunner.connection
       .createQueryBuilder()
       .insert()
       .into(chatChannelUserTable.name)
@@ -62,36 +52,12 @@ export class ChatService extends BaseService {
       )
       .execute();
 
+    await this.commitTransaction();
     return chatGroupEntity;
   }
 
   async getChannel(channelId: number) {
     return await this.channelRepository.findOneBy({ id: channelId });
-  }
-
-  async addMessage(ownerId: number, data: SendMessageDto) {
-    const chatGroup = await this.channelRepository.findOneBy({
-      id: data.channel,
-    });
-    if (!chatGroup) {
-      throw new HttpException(
-        `Chat group ${data.channel} not found`,
-        HttpStatus.NOT_FOUND
-      );
-    }
-    const chatMessageEntity = new ChatMessageEntity();
-    chatMessageEntity.content = data.message;
-    chatMessageEntity.ownerId = ownerId;
-    chatMessageEntity.channelId = data.channel;
-    await chatMessageEntity.save();
-
-    await this.pusher.trigger(
-      `chat_${data.channel}`,
-      "message",
-      chatMessageEntity
-    );
-
-    return chatMessageEntity;
   }
 
   async getAllGroupOfUser(userId: number) {

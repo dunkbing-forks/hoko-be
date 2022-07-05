@@ -17,13 +17,6 @@ export default {
   jwt: {
     secretOrKey: process.env.JWT_SIGN_SECRET,
   },
-  soketi: {
-    appId: process.env.SOKETI_APP_ID,
-    key: process.env.SOKETI_APP_KEY,
-    secret: process.env.SOKETI_APP_SECRET,
-    host: process.env.SOKETI_HOST,
-    port: process.env.SOKETI_PORT,
-  },
   googleEmail: {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,

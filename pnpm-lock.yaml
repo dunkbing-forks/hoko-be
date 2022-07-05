@@ -47,7 +47,6 @@ specifiers:
   passport-jwt: ^4.0.0
   passport-local: ^1.0.0
   prettier: ^2.6.2
-  pusher: ^5.1.0-beta
   rand-token: ^1.0.1
   readline: ^1.3.0
   redis: ^4.1.1
@@ -97,7 +96,6 @@ dependencies:
   passport-google-oauth20: 2.0.0
   passport-jwt: 4.0.0
   passport-local: 1.0.0
-  pusher: 5.1.0-beta
   rand-token: 1.0.1
   readline: 1.3.0
   redis: 4.1.1
@@ -7774,14 +7772,6 @@ packages:
       }
     dev: true
 
-  /is-base64/1.1.0:
-    resolution:
-      {
-        integrity: sha512-Nlhg7Z2dVC4/PTvIFkgVVNvPHSO2eR/Yd0XzhGiXCXEvWnptXlXa/clQ8aePPiMuxEGcWfzWbGw2Fe3d+Y3v1g==,
-      }
-    hasBin: true
-    dev: false
-
   /is-bigint/1.0.4:
     resolution:
       {
@@ -12035,22 +12025,6 @@ packages:
       }
     engines: { node: ">=6" }
 
-  /pusher/5.1.0-beta:
-    resolution:
-      {
-        integrity: sha512-ujM7BHA77/sHdIuhAbRdWdnaY+KhSuGZg/1OVjKxiIqnTV8BgSL7+heBCtkRMF9pjvy9jElR8s0eCUlSfJ1FAg==,
-      }
-    engines: { node: ">= 4.0.0" }
-    dependencies:
-      abort-controller: 3.0.0
-      is-base64: 1.1.0
-      node-fetch: 2.6.7
-      tweetnacl: 1.0.3
-      tweetnacl-util: 0.15.1
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   /qs/6.10.3:
     resolution:
       {
@@ -14162,24 +14136,10 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /tweetnacl-util/0.15.1:
-    resolution:
-      {
-        integrity: sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw==,
-      }
-    dev: false
-
   /tweetnacl/0.14.5:
     resolution:
       {
         integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==,
-      }
-    dev: false
-
-  /tweetnacl/1.0.3:
-    resolution:
-      {
-        integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==,
       }
     dev: false
 

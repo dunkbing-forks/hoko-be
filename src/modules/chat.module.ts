@@ -6,6 +6,7 @@ import { ChatService } from "@services/chat.service";
 import { ChatChannelEntity } from "@entities/chat-channel.entity";
 import { UserModule } from "./users.module";
 import { MeetGateway } from "@services/meet.gateway";
+import { ChatGateway } from "@services/chat.gateway";
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { MeetGateway } from "@services/meet.gateway";
     UserModule,
   ],
   controllers: [ChatController],
-  providers: [ChatService, MeetGateway],
+  providers: [ChatService, ChatGateway, MeetGateway],
 })
 export class ChatModule {}
