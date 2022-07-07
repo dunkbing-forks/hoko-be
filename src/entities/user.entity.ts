@@ -59,7 +59,7 @@ export class UserEntity extends BaseEntity {
   role: number;
 
   @Column({ name: "active", type: "smallint", default: 1 })
-  active: boolean;
+  active: number;
 
   @Column({ name: "hashed_refresh_token", nullable: true })
   hashedRefreshToken: string;

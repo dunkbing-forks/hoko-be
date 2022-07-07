@@ -19,7 +19,7 @@ export class CommentEntity extends BaseEntity {
   id: number;
 
   @Column({ name: "active", type: "smallint", default: 1 })
-  active: boolean;
+  active: number;
 
   @Column({ name: "content", type: "varchar", length: 255 })
   content: string;

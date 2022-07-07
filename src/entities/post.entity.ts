@@ -30,7 +30,7 @@ export class PostEntity extends BaseEntity {
   content: string;
 
   @Column({ name: "active", type: "smallint", default: 1 })
-  active: boolean;
+  active: number;
 
   @Column({ type: "enum", enum: Privacy, default: Privacy.PUBLIC })
   privacy: Privacy;

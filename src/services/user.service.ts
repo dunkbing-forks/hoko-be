@@ -19,7 +19,7 @@ interface IUser {
   username?: string;
   password: string;
   role?: number;
-  active?: boolean;
+  active?: number;
   firstName?: string;
   lastName?: string;
   address?: string;

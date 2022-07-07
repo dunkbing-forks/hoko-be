@@ -96,7 +96,7 @@ export type UserResponse = {
   id: number;
   username: string;
   role: number;
-  active: boolean;
+  active: number;
   refreshToken: string;
   contactInfo: {
     id: number;

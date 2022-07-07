@@ -28,7 +28,7 @@ export class PostsService extends BaseService {
 
     postEntity.privacy = post.privacy;
     postEntity.ownerId = post.ownerId;
-    postEntity.active = true;
+    postEntity.active = 1;
     const utc = moment.utc().format("YYYY-MM-DD HH:mm:ss");
     postEntity.createdAt = new Date(utc);
     postEntity.updatedAt = new Date(utc);
@@ -51,7 +51,7 @@ export class PostsService extends BaseService {
   async getPosts(take = 10, page = 0): Promise<Pagination<PostEntity>> {
     const skip = page * take;
     const [result, total] = await this.postsRepository.findAndCount({
-      where: { active: true },
+      where: { active: 1 },
       order: { updatedAt: "DESC" },
       take,
       skip,
@@ -72,7 +72,7 @@ export class PostsService extends BaseService {
   ): Promise<Pagination<PostEntity>> {
     const skip = page * take;
     const [result, count] = await this.postsRepository.findAndCount({
-      where: { ownerId: userId, active: true },
+      where: { ownerId: userId, active: 1 },
       order: { updatedAt: "DESC" },
       take,
       skip,
@@ -88,7 +88,7 @@ export class PostsService extends BaseService {
   async getTop5Posts(): Promise<PostEntity[]> {
     return this.postsRepository
       .createQueryBuilder("posts")
-      .where("posts.active = :active", { active: true })
+      .where("posts.active = :active", { active: 1 })
       .orderBy("posts.updated_at", "DESC")
       .limit(5)
       .getMany();
@@ -100,7 +100,7 @@ export class PostsService extends BaseService {
       const countActions = await this.postsRepository
         .createQueryBuilder("posts")
         .leftJoinAndSelect("posts.actions", "actionsPost")
-        .where("posts.active = :active", { active: true })
+        .where("posts.active = :active", { active: 1 })
         .addSelect("COUNT(actionsPost.postId) as countActions")
         .orderBy("countActions", "DESC")
         .limit(5)
@@ -108,7 +108,7 @@ export class PostsService extends BaseService {
 
       const topFive = await this.postsRepository
         .createQueryBuilder("posts")
-        .where("posts.active = :active", { active: true })
+        .where("posts.active = :active", { active: 1 })
         .orderBy("posts.updated_at", "DESC")
         .limit(5)
         .getMany();
@@ -159,7 +159,7 @@ export class PostsService extends BaseService {
   }
 
   async deletePost(post: PostEntity): Promise<PostEntity> {
-    post.active = false;
+    post.active = 0;
     return this.postsRepository.save(post);
   }
 }

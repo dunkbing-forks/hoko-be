@@ -21,7 +21,7 @@ export class WalletEntity extends BaseEntity {
   walletPrivateKey: string;
 
   @Column({ name: "active", type: "smallint", default: 1 })
-  active: boolean;
+  active: number;
 
   @Column({ name: "owner_id", type: "int" })
   ownerId: number;
