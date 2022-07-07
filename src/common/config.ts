@@ -14,6 +14,9 @@ export default {
     dbUser: process.env.DB_USER,
     dbPassword: process.env.DB_PASSWORD,
   },
+  redis: {
+    url: process.env.REDIS_URL
+  },
   jwt: {
     secretOrKey: process.env.JWT_SIGN_SECRET,
   },

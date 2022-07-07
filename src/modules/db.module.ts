@@ -3,12 +3,12 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 import config from "@common/config";
 import { entities } from "@/entities";
-import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOptions";
+import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 const dbConfig = config.database;
 
-export const mysqlOptions: MysqlConnectionOptions = {
-  type: "mysql",
+export const mysqlOptions: PostgresConnectionOptions = {
+  type: "postgres",
   host: dbConfig.host,
   port: dbConfig.port,
   database: dbConfig.dbName,
@@ -17,6 +17,9 @@ export const mysqlOptions: MysqlConnectionOptions = {
   password: dbConfig.dbPassword,
   logging: false,
   entities,
+  ssl: {
+    rejectUnauthorized: false,
+  }
 };
 
 @Module({

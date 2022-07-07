@@ -18,10 +18,10 @@ export class CommentEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ name: "active", type: "tinyint", default: 1 })
+  @Column({ name: "active", type: "smallint", default: 1 })
   active: boolean;
 
-  @Column({ name: "content", type: "nvarchar", length: 255 })
+  @Column({ name: "content", type: "varchar", length: 255 })
   content: string;
 
   @Column({ name: "post_id", type: "int" })

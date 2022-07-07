@@ -20,7 +20,7 @@ export class WalletEntity extends BaseEntity {
   @Column({ name: "wallet_private_key", type: "varchar", length: 255 })
   walletPrivateKey: string;
 
-  @Column({ name: "active", type: "tinyint", default: 1 })
+  @Column({ name: "active", type: "smallint", default: 1 })
   active: boolean;
 
   @Column({ name: "owner_id", type: "int" })

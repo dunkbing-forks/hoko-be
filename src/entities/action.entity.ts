@@ -18,12 +18,12 @@ export class ActionEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment", { name: "id", type: "int" })
   id: number;
 
-  @Column({ name: "icon", type: "nvarchar", length: 255 })
+  @Column({ name: "icon", type: "varchar", length: 255 })
   icon: string;
 
   @Column({
     name: "type",
-    type: "nvarchar",
+    type: "varchar",
     length: 255,
     default: ActionType.DISLIKE,
   })

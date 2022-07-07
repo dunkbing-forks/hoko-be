@@ -55,10 +55,10 @@ export class UserEntity extends BaseEntity {
   })
   password: string;
 
-  @Column({ name: "role", type: "tinyint", default: 3 })
+  @Column({ name: "role", type: "smallint", default: 3 })
   role: number;
 
-  @Column({ name: "active", type: "tinyint", default: 1 })
+  @Column({ name: "active", type: "smallint", default: 1 })
   active: boolean;
 
   @Column({ name: "hashed_refresh_token", nullable: true })
