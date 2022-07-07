@@ -8,34 +8,14 @@ import {
 
 export class CreateUserDto {
   @IsString()
-  @MinLength(6, { message: "Username is too short" })
-  readonly username: string;
-
-  @IsString()
   @MinLength(6, { message: "Password is too short" })
   readonly password: string;
-
-  @IsNumber()
-  @IsOptional()
-  readonly role?: number;
-
-  @IsBoolean()
-  readonly active?: boolean;
-
-  @IsString()
-  readonly firstName?: string;
-
-  @IsString()
-  readonly lastName?: string;
 
   @IsString()
   readonly email: string;
 
   @IsString()
   readonly phone: string;
-
-  @IsString()
-  readonly address?: string;
 }
 
 export class GetInformationDto {
