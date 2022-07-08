@@ -1,6 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { Logger, ValidationPipe } from "@nestjs/common";
+import {SwaggerModule, DocumentBuilder, SwaggerDocumentOptions} from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
@@ -53,6 +54,22 @@ async function bootstrap() {
   const redisIoAdapter = new RedisIoAdapter(app);
   await redisIoAdapter.connectToRedis();
   app.useWebSocketAdapter(redisIoAdapter);
+
+  const documentConfig = new DocumentBuilder()
+    .setTitle("NestJS API")
+    .setDescription("NestJS API")
+    .setVersion("1.0")
+    .addBearerAuth()
+    .build();
+  const documentOptions: SwaggerDocumentOptions = {
+    operationIdFactory: (
+      controllerKey: string,
+      methodKey: string,
+    ) => methodKey,
+  };
+  const document = SwaggerModule.createDocument(app, documentConfig, documentOptions);
+  SwaggerModule.setup("api", app, document);
+
   await app.listen(config.port);
   logger.log(`Server running on: ${await app.getUrl()}`);
 }

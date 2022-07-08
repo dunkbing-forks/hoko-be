@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { QueryRunner, DataSource } from "typeorm";
-import { mysqlOptions } from "@modules/db.module";
+import { sqlOptions } from "@modules/db.module";
 
 @Injectable()
 export class BaseService {
@@ -8,7 +8,7 @@ export class BaseService {
   constructor() {}
   public async startTransaction() {
     // this.queryRunner = getConnection().createQueryRunner();
-    const dataSource = new DataSource(mysqlOptions);
+    const dataSource = new DataSource(sqlOptions);
     await dataSource.initialize();
     this.queryRunner = dataSource.manager.connection.createQueryRunner();
     await this.queryRunner.connect();

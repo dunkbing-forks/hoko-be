@@ -7,7 +7,7 @@ import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConne
 
 const dbConfig = config.database;
 
-export const mysqlOptions: PostgresConnectionOptions = {
+export const sqlOptions: PostgresConnectionOptions = {
   type: "postgres",
   host: dbConfig.host,
   port: dbConfig.port,
@@ -17,15 +17,15 @@ export const mysqlOptions: PostgresConnectionOptions = {
   password: dbConfig.dbPassword,
   logging: false,
   entities,
-  ssl: {
+  ssl: config.nodeEnv === "production" && {
     rejectUnauthorized: false,
-  }
+  },
 };
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      ...mysqlOptions,
+      ...sqlOptions,
       autoLoadEntities: true,
     }),
   ],
