@@ -2,17 +2,18 @@ version: "3.4"
 
 services:
   db:
-    image: mysql:latest
+    image: postgres:latest
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE
     environment:
-      MYSQL_DATABASE: hokodity
-      MYSQL_ROOT_PASSWORD: mysqlpw
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: hokodity
+      POSTGRES_DB: hokodity
     ports:
-      - "3306:3306"
+      - "5432:5432"
     restart: always
     volumes:
-      - db:/var/lib/mysql
+      - db:/data/postgres
 
   redis:
     image: redis:latest
@@ -21,47 +22,3 @@ services:
     restart: always
     volumes:
       - db:/data/redis
-  # soketi:
-  #   image: quay.io/soketi/soketi:0.34-16-debian
-  #   environment:
-  #     DEFAULT_APP_ID: "1419288"
-  #     DEFAULT_APP_KEY: "25ffc95438e35357c167"
-  #     DEFAULT_APP_SECRET: "07c6ed0a7df866a0feb2"
-  #     DEFAULT_APP_MAX_CONNS: 20
-  #     DEFAULT_APP_ENABLE_CLIENT_MESSAGES: 1
-  #   ports:
-  #     - "6001:6001"
-  #   expose:
-  #     - 6001
-  #   restart: always
-  #   volumes:
-  #     - db:/data/soketi
-
-  # hokodity:
-  #   depends_on:
-  #     - db
-  #   image: hokobackend
-  #   restart: always
-  #   build:
-  #     context: ./
-  #     dockerfile: ./Dockerfile
-  #   environment:
-  #     NODE_ENV: production
-  #     DB_HOST: db
-  #     DB_PORT: 3306
-  #     DB_USER: root
-  #     DB_PASSWORD: mysqlpw
-  #     DB_NAME: hokodity
-  #     JWT_SIGN_SECRET: "secret"
-  #   ports:
-  #     - "3001:3001"
-  #   expose:
-  #     - 3001
-  #   links:
-  #     - db
-  #   volumes:
-  #     - ./:/src
-
-volumes:
-  db:
-    driver: local
