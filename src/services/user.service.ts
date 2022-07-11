@@ -19,7 +19,7 @@ interface IUser {
   username?: string;
   password: string;
   role?: number;
-  active?: number;
+  active?: boolean;
   firstName?: string;
   lastName?: string;
   address?: string;
@@ -286,12 +286,13 @@ export class UserService extends BaseService {
   }
 
   async getUserById(userId: number): Promise<UserEntity> {
-    return await this.userRepository
+    const query = this.userRepository
       .createQueryBuilder("users")
-      .where("`users`.`id` = :id", { id: userId })
+      .where("users.id = :id", { id: userId })
       .leftJoinAndSelect("users.contactInfo", "contacts")
       .leftJoinAndSelect("users.wallets", "wallets")
-      .getOne();
+    console.log(query.getQuery());
+    return query.getOne();
   }
 
   async updateUserInformation(req: any): Promise<ContactEntity> {

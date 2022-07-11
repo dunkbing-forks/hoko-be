@@ -39,10 +39,10 @@ export class ChatController extends BaseController {
   ) {
     const user = req.user as UserReqPayload;
     const ownerId = user.id;
-
-    data.memberIds.push(ownerId)
-
-    data.memberIds =  R.uniq(data.memberIds)
+    //
+    // data.memberIds.push(ownerId)
+    //
+    // data.memberIds =  R.uniq(data.memberIds)
 
     const usernames = await Promise.all(
       data.memberIds.map(async (id) => {
@@ -53,6 +53,7 @@ export class ChatController extends BaseController {
         return user.username;
       })
     );
+    console.log("usernames", usernames);
     const displayName = data.groupName ? data.groupName : usernames.join(", ");
 
     const group = await this.chatService.addGroupChat(
